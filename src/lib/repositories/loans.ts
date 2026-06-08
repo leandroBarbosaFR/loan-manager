@@ -55,6 +55,10 @@ export async function getLoan(id: string): Promise<LoanWithRelations | null> {
 
 export async function createLoan(input: LoanInput): Promise<Loan> {
   const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  const ownerId = user!.id;
 
   const rolloverFee =
     input.rollover && input.first_due_date
@@ -64,6 +68,7 @@ export async function createLoan(input: LoanInput): Promise<Loan> {
   const { data: loan, error } = await supabase
     .from("loans")
     .insert({
+      owner_id: ownerId,
       customer_id: input.customer_id,
       principal: input.principal,
       total_receivable: input.total_receivable,
@@ -80,6 +85,7 @@ export async function createLoan(input: LoanInput): Promise<Loan> {
   if (rolloverFee != null && input.first_due_date) {
     const { error: instError } = await supabase.from("installments").insert([
       {
+        owner_id: ownerId,
         loan_id: loan.id,
         due_date: input.first_due_date,
         amount: rolloverFee,
@@ -87,6 +93,7 @@ export async function createLoan(input: LoanInput): Promise<Loan> {
         kind: "fee" as const,
       },
       {
+        owner_id: ownerId,
         loan_id: loan.id,
         due_date: input.first_due_date,
         amount: input.principal,
@@ -109,6 +116,7 @@ export async function createLoan(input: LoanInput): Promise<Loan> {
             input.first_due_date,
           );
     const rows = planned.map((p) => ({
+      owner_id: ownerId,
       loan_id: loan.id,
       due_date: p.due_date,
       amount: p.amount,
@@ -197,6 +205,7 @@ export async function rollOverLoan(loanId: string): Promise<void> {
 
   // 2. Charge a fresh fee for next period.
   const { error: newFeeError } = await supabase.from("installments").insert({
+    owner_id: loan.owner_id,
     loan_id: loanId,
     due_date: nextDue,
     amount: fee,

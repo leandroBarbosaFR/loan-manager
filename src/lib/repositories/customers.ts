@@ -31,9 +31,12 @@ export async function getCustomer(id: string): Promise<Customer | null> {
 
 export async function createCustomer(input: CustomerInput): Promise<Customer> {
   const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
   const { data, error } = await supabase
     .from("customers")
-    .insert(input)
+    .insert({ ...input, owner_id: user!.id })
     .select("*")
     .single();
   if (error) throw error;
@@ -74,6 +77,9 @@ export async function addCustomerDocuments(
   if (valid.length === 0) return;
 
   const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
 
   for (const file of valid) {
     const safeName = file.name.replace(/[^a-zA-Z0-9._-]/g, "_");
@@ -89,7 +95,7 @@ export async function addCustomerDocuments(
 
     const { error: insertError } = await supabase
       .from("customer_documents")
-      .insert({ customer_id: customerId, name: file.name, path });
+      .insert({ customer_id: customerId, name: file.name, path, owner_id: user!.id });
     if (insertError) throw insertError;
   }
 }

@@ -28,6 +28,32 @@ const en = {
   "nav.loans": "Loans",
   "nav.installments": "Installments",
   "nav.reports": "Reports",
+  "nav.calculator": "Calculator",
+  "nav.users": "Users",
+
+  // Calculator
+  "calculator.title": "Calculator",
+  "calculator.description": "A quick calculator, built in.",
+  "calculator.error": "Error",
+
+  // Users (admin)
+  "users.title": "Users",
+  "users.description": "Manage who can sign in. Each user sees only their own data.",
+  "users.newHeading": "Add a user",
+  "users.email": "Email",
+  "users.password": "Password",
+  "users.role": "Role",
+  "users.roleSuperAdmin": "Super-admin",
+  "users.roleUser": "User",
+  "users.create": "Create user",
+  "users.created": "User created.",
+  "users.colEmail": "Email",
+  "users.colRole": "Role",
+  "users.colCreated": "Created",
+  "users.you": "You",
+  "users.deleteConfirm":
+    "Delete this user and ALL their customers, loans and documents? This cannot be undone.",
+  "users.empty": "No users yet.",
 
   // App shell
   "app.menu": "Menu",
@@ -266,6 +292,32 @@ const ptBR: Messages = {
   "nav.loans": "Empréstimos",
   "nav.installments": "Parcelas",
   "nav.reports": "Relatórios",
+  "nav.calculator": "Calculadora",
+  "nav.users": "Usuários",
+
+  // Calculator
+  "calculator.title": "Calculadora",
+  "calculator.description": "Uma calculadora rápida, já integrada.",
+  "calculator.error": "Erro",
+
+  // Users (admin)
+  "users.title": "Usuários",
+  "users.description": "Gerencie quem pode entrar. Cada usuário vê apenas os próprios dados.",
+  "users.newHeading": "Adicionar usuário",
+  "users.email": "E-mail",
+  "users.password": "Senha",
+  "users.role": "Papel",
+  "users.roleSuperAdmin": "Super-admin",
+  "users.roleUser": "Usuário",
+  "users.create": "Criar usuário",
+  "users.created": "Usuário criado.",
+  "users.colEmail": "E-mail",
+  "users.colRole": "Papel",
+  "users.colCreated": "Criado em",
+  "users.you": "Você",
+  "users.deleteConfirm":
+    "Excluir este usuário e TODOS os seus clientes, empréstimos e documentos? Esta ação não pode ser desfeita.",
+  "users.empty": "Nenhum usuário ainda.",
 
   // App shell
   "app.menu": "Menu",

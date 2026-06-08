@@ -12,6 +12,11 @@ const LINKS: { href: string; key: MessageKey }[] = [
   { href: "/loans", key: "nav.loans" },
   { href: "/installments", key: "nav.installments" },
   { href: "/reports", key: "nav.reports" },
+  { href: "/calculator", key: "nav.calculator" },
+];
+
+const ADMIN_LINKS: { href: string; key: MessageKey }[] = [
+  { href: "/users", key: "nav.users" },
 ];
 
 function isActive(pathname: string, href: string) {
@@ -19,12 +24,19 @@ function isActive(pathname: string, href: string) {
   return pathname === href || pathname.startsWith(`${href}/`);
 }
 
-export function Nav({ onNavigate }: { onNavigate?: () => void }) {
+export function Nav({
+  onNavigate,
+  isSuperAdmin = false,
+}: {
+  onNavigate?: () => void;
+  isSuperAdmin?: boolean;
+}) {
   const pathname = usePathname();
   const t = useT();
+  const links = isSuperAdmin ? [...LINKS, ...ADMIN_LINKS] : LINKS;
   return (
     <nav className="flex flex-col">
-      {LINKS.map((link) => (
+      {links.map((link) => (
         <Link
           key={link.href}
           href={link.href}

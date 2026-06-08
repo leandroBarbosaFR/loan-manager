@@ -13,9 +13,18 @@
 export type LoanStatus = "open" | "paid" | "overdue";
 export type InstallmentStatus = "pending" | "paid" | "overdue";
 export type InstallmentKind = "scheduled" | "fee" | "principal";
+export type UserRole = "super_admin" | "user";
+
+export type Profile = {
+  id: string;
+  email: string | null;
+  role: UserRole;
+  created_at: string;
+};
 
 export type Customer = {
   id: string;
+  owner_id: string;
   name: string;
   phone: string | null;
   notes: string | null;
@@ -31,6 +40,7 @@ export type Customer = {
 
 export type CustomerDocument = {
   id: string;
+  owner_id: string;
   customer_id: string;
   name: string;
   path: string;
@@ -39,6 +49,7 @@ export type CustomerDocument = {
 
 export type Loan = {
   id: string;
+  owner_id: string;
   customer_id: string;
   principal: number;
   total_receivable: number;
@@ -52,6 +63,7 @@ export type Loan = {
 
 export type Installment = {
   id: string;
+  owner_id: string;
   loan_id: string;
   due_date: string;
   amount: number;
@@ -110,6 +122,7 @@ export type Database = {
         Row: Installment;
         Insert: {
           id?: string;
+          owner_id?: string;
           loan_id: string;
           due_date: string;
           amount: number;
@@ -119,6 +132,12 @@ export type Database = {
           kind?: InstallmentKind;
         };
         Update: Partial<Omit<Installment, "id">>;
+        Relationships: [];
+      };
+      profiles: {
+        Row: Profile;
+        Insert: Omit<Profile, "created_at"> & { created_at?: string };
+        Update: Partial<Omit<Profile, "id" | "created_at">>;
         Relationships: [];
       };
     };

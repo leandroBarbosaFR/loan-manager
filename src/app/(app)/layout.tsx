@@ -1,4 +1,4 @@
-import { requireUser } from "@/lib/auth";
+import { requireUser, getRole } from "@/lib/auth";
 import { AppShell } from "@/components/app-shell";
 
 export default async function AppLayout({
@@ -7,5 +7,10 @@ export default async function AppLayout({
   children: React.ReactNode;
 }) {
   const user = await requireUser();
-  return <AppShell email={user.email ?? "admin"}>{children}</AppShell>;
+  const role = await getRole();
+  return (
+    <AppShell email={user.email ?? "admin"} isSuperAdmin={role === "super_admin"}>
+      {children}
+    </AppShell>
+  );
 }

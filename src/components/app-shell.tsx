@@ -11,9 +11,11 @@ import { cn } from "@/lib/utils";
 
 export function AppShell({
   email,
+  isSuperAdmin = false,
   children,
 }: {
   email: string;
+  isSuperAdmin?: boolean;
   children: React.ReactNode;
 }) {
   const [open, setOpen] = useState(false);
@@ -60,7 +62,7 @@ export function AppShell({
             className="h-8 w-auto"
           />
         </div>
-        <Nav onNavigate={() => setOpen(false)} />
+        <Nav onNavigate={() => setOpen(false)} isSuperAdmin={isSuperAdmin} />
         <div className="mt-auto border-t border-border p-4">
           <div className="mb-3">
             <LanguageSwitcher />

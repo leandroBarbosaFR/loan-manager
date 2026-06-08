@@ -36,6 +36,17 @@ const money = z.coerce
   .max(99_999_999.99, "Amount is too large");
 
 // ---------------------------------------------------------------------------
+// Users (super-admin account management)
+// ---------------------------------------------------------------------------
+export const newUserSchema = z.object({
+  email: z.string().trim().email("Enter a valid email"),
+  password: z.string().min(8, "Password must be at least 8 characters"),
+  role: z.enum(["super_admin", "user"]).default("user"),
+});
+
+export type NewUserInput = z.infer<typeof newUserSchema>;
+
+// ---------------------------------------------------------------------------
 // Customers
 // ---------------------------------------------------------------------------
 export const customerSchema = z.object({
