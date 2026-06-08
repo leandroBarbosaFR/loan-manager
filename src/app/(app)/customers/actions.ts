@@ -1,0 +1,77 @@
+"use server";
+
+import { revalidatePath } from "next/cache";
+import { redirect } from "next/navigation";
+import { customerSchema } from "@/lib/validations";
+import { zodToFieldErrors, type ActionState } from "@/lib/action-state";
+import {
+  createCustomer,
+  updateCustomer,
+  deleteCustomer,
+  addCustomerDocuments,
+  deleteCustomerDocument,
+} from "@/lib/repositories/customers";
+
+function parse(formData: FormData) {
+  return customerSchema.safeParse({
+    name: formData.get("name"),
+    birthday: formData.get("birthday"),
+    phone_ddd: formData.get("phone_ddd"),
+    phone: formData.get("phone"),
+    street: formData.get("street"),
+    street_number: formData.get("street_number"),
+    cep: formData.get("cep"),
+    city: formData.get("city"),
+    state: formData.get("state"),
+    notes: formData.get("notes"),
+  });
+}
+
+function documentFiles(formData: FormData): File[] {
+  return formData
+    .getAll("documents")
+    .filter((v): v is File => v instanceof File);
+}
+
+export async function createCustomerAction(
+  _prev: ActionState,
+  formData: FormData,
+): Promise<ActionState> {
+  const parsed = parse(formData);
+  if (!parsed.success) return zodToFieldErrors(parsed.error);
+
+  const customer = await createCustomer(parsed.data);
+  await addCustomerDocuments(customer.id, documentFiles(formData));
+  revalidatePath("/customers");
+  redirect(`/customers/${customer.id}`);
+}
+
+export async function updateCustomerAction(
+  id: string,
+  _prev: ActionState,
+  formData: FormData,
+): Promise<ActionState> {
+  const parsed = parse(formData);
+  if (!parsed.success) return zodToFieldErrors(parsed.error);
+
+  await updateCustomer(id, parsed.data);
+  await addCustomerDocuments(id, documentFiles(formData));
+  revalidatePath("/customers");
+  revalidatePath(`/customers/${id}`);
+  redirect(`/customers/${id}`);
+}
+
+export async function deleteCustomerAction(id: string): Promise<void> {
+  await deleteCustomer(id);
+  revalidatePath("/customers");
+  redirect("/customers");
+}
+
+export async function deleteCustomerDocumentAction(
+  documentId: string,
+  customerId: string,
+): Promise<void> {
+  await deleteCustomerDocument(documentId);
+  revalidatePath(`/customers/${customerId}`);
+  revalidatePath(`/customers/${customerId}/edit`);
+}
