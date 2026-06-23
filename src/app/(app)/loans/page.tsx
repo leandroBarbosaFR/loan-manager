@@ -110,8 +110,12 @@ export default async function LoansPage({
               <TableHead>{t("common.customer")}</TableHead>
               <TableHead>{t("loans.colNextPayment")}</TableHead>
               <TableHead className="text-right">{t("loans.colAmountLoaned")}</TableHead>
-              <TableHead className="text-right">{t("loans.colReceivable")}</TableHead>
-              <TableHead className="text-right">{t("loans.colProfit")}</TableHead>
+              <TableHead className="hidden text-right md:table-cell">
+                {t("loans.colReceivable")}
+              </TableHead>
+              <TableHead className="hidden text-right sm:table-cell">
+                {t("loans.colProfit")}
+              </TableHead>
               <TableHead>{t("common.status")}</TableHead>
               <TableHead />
             </TableRow>
@@ -140,10 +144,10 @@ export default async function LoansPage({
                   <TableCell className="text-right tabular-nums">
                     {formatMoney(loan.principal)}
                   </TableCell>
-                  <TableCell className="text-right tabular-nums">
+                  <TableCell className="hidden text-right tabular-nums md:table-cell">
                     {formatMoney(loan.total_receivable)}
                   </TableCell>
-                  <TableCell className="text-right tabular-nums">
+                  <TableCell className="hidden text-right tabular-nums sm:table-cell">
                     {formatMoney(round2(loan.total_receivable - loan.principal))}
                   </TableCell>
                   <TableCell>

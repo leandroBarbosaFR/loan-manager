@@ -29,12 +29,36 @@ const en = {
   "nav.installments": "Installments",
   "nav.reports": "Reports",
   "nav.calculator": "Calculator",
+  "nav.whatsapp": "WhatsApp",
   "nav.users": "Users",
 
   // Calculator
   "calculator.title": "Calculator",
   "calculator.description": "A quick calculator, built in.",
   "calculator.error": "Error",
+
+  // WhatsApp reminders
+  "whatsapp.title": "WhatsApp reminders",
+  "whatsapp.description":
+    "Automatically remind customers before their payment is due.",
+  "whatsapp.intro":
+    "Messages are sent through the Meta WhatsApp Cloud API, so each phrase must match an approved template. Use the placeholders {1} = name, {2} = due date, {3} = amount.",
+  "whatsapp.enabled": "Send reminders automatically",
+  "whatsapp.sendHour": "Send at (hour, 0–23)",
+  "whatsapp.timezone": "Timezone",
+  "whatsapp.lang": "Template language code",
+  "whatsapp.section2d": "2 days before due",
+  "whatsapp.section1d": "1 day before due",
+  "whatsapp.sectionDue": "On the due date",
+  "whatsapp.templateName": "Approved template name",
+  "whatsapp.phrase": "Message text (for your reference)",
+  "whatsapp.save": "Save settings",
+  "whatsapp.saved": "Settings saved.",
+  "whatsapp.testHeading": "Send a test",
+  "whatsapp.testNumber": "Test number (with DDD)",
+  "whatsapp.testWhich": "Which message",
+  "whatsapp.sendTest": "Send test",
+  "whatsapp.testSent": "Test message sent.",
 
   // Users (admin)
   "users.title": "Users",
@@ -264,6 +288,11 @@ const en = {
   "login.password": "Password",
   "login.signingIn": "Signing in…",
   "login.signIn": "Sign in",
+  "login.invalidEmail": "Enter a valid email address.",
+  "login.passwordRequired": "Enter your password.",
+  "login.invalidCredentials": "Email or password is incorrect.",
+  "login.showPassword": "Show password",
+  "login.hidePassword": "Hide password",
 } as const;
 
 export type MessageKey = keyof typeof en;
@@ -293,12 +322,36 @@ const ptBR: Messages = {
   "nav.installments": "Parcelas",
   "nav.reports": "Relatórios",
   "nav.calculator": "Calculadora",
+  "nav.whatsapp": "WhatsApp",
   "nav.users": "Usuários",
 
   // Calculator
   "calculator.title": "Calculadora",
   "calculator.description": "Uma calculadora rápida, já integrada.",
   "calculator.error": "Erro",
+
+  // WhatsApp reminders
+  "whatsapp.title": "Lembretes no WhatsApp",
+  "whatsapp.description":
+    "Lembre os clientes automaticamente antes do vencimento do pagamento.",
+  "whatsapp.intro":
+    "As mensagens são enviadas pela API do WhatsApp Cloud (Meta), então cada frase precisa corresponder a um template aprovado. Use os marcadores {1} = nome, {2} = data de vencimento, {3} = valor.",
+  "whatsapp.enabled": "Enviar lembretes automaticamente",
+  "whatsapp.sendHour": "Enviar às (hora, 0–23)",
+  "whatsapp.timezone": "Fuso horário",
+  "whatsapp.lang": "Código de idioma do template",
+  "whatsapp.section2d": "2 dias antes do vencimento",
+  "whatsapp.section1d": "1 dia antes do vencimento",
+  "whatsapp.sectionDue": "No dia do vencimento",
+  "whatsapp.templateName": "Nome do template aprovado",
+  "whatsapp.phrase": "Texto da mensagem (para sua referência)",
+  "whatsapp.save": "Salvar configurações",
+  "whatsapp.saved": "Configurações salvas.",
+  "whatsapp.testHeading": "Enviar um teste",
+  "whatsapp.testNumber": "Número de teste (com DDD)",
+  "whatsapp.testWhich": "Qual mensagem",
+  "whatsapp.sendTest": "Enviar teste",
+  "whatsapp.testSent": "Mensagem de teste enviada.",
 
   // Users (admin)
   "users.title": "Usuários",
@@ -528,6 +581,11 @@ const ptBR: Messages = {
   "login.password": "Senha",
   "login.signingIn": "Entrando…",
   "login.signIn": "Entrar",
+  "login.invalidEmail": "Digite um e-mail válido.",
+  "login.passwordRequired": "Digite sua senha.",
+  "login.invalidCredentials": "E-mail ou senha incorretos.",
+  "login.showPassword": "Mostrar senha",
+  "login.hidePassword": "Ocultar senha",
 };
 
 const dictionaries: Record<Locale, Messages> = {

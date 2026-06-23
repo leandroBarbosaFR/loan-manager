@@ -41,6 +41,17 @@ export function today(): string {
   return `${y}-${m}-${d}`;
 }
 
+/** Adds whole days to a `YYYY-MM-DD` date. */
+export function addDays(isoDate: string, days: number): string {
+  const [y, m, d] = isoDate.split("-").map(Number);
+  if (!y || !m || !d) return isoDate;
+  const base = new Date(y, m - 1, d + days);
+  const yy = base.getFullYear();
+  const mm = String(base.getMonth() + 1).padStart(2, "0");
+  const dd = String(base.getDate()).padStart(2, "0");
+  return `${yy}-${mm}-${dd}`;
+}
+
 /** Adds whole months to a `YYYY-MM-DD` date, clamping the day. */
 export function addMonths(isoDate: string, months: number): string {
   const [y, m, d] = isoDate.split("-").map(Number);

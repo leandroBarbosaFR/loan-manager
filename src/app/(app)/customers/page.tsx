@@ -58,7 +58,9 @@ export default async function CustomersPage({
             <TableRow>
               <TableHead>{t("customers.colName")}</TableHead>
               <TableHead>{t("customers.colPhone")}</TableHead>
-              <TableHead>{t("customers.colNotes")}</TableHead>
+              <TableHead className="hidden sm:table-cell">
+                {t("customers.colNotes")}
+              </TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -73,7 +75,7 @@ export default async function CustomersPage({
                   </Link>
                 </TableCell>
                 <TableCell>{c.phone ?? t("common.dash")}</TableCell>
-                <TableCell className="max-w-xs truncate text-muted-foreground">
+                <TableCell className="hidden max-w-xs truncate text-muted-foreground sm:table-cell">
                   {c.notes ?? t("common.dash")}
                 </TableCell>
               </TableRow>

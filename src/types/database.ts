@@ -22,6 +22,23 @@ export type Profile = {
   created_at: string;
 };
 
+export type ReminderType = "d2" | "d1" | "due";
+
+export type WhatsappSettings = {
+  owner_id: string;
+  enabled: boolean;
+  send_hour: number;
+  timezone: string;
+  lang: string;
+  template_2d: string | null;
+  template_1d: string | null;
+  template_due: string | null;
+  phrase_2d: string | null;
+  phrase_1d: string | null;
+  phrase_due: string | null;
+  updated_at: string;
+};
+
 export type Customer = {
   id: string;
   owner_id: string;
@@ -138,6 +155,34 @@ export type Database = {
         Row: Profile;
         Insert: Omit<Profile, "created_at"> & { created_at?: string };
         Update: Partial<Omit<Profile, "id" | "created_at">>;
+        Relationships: [];
+      };
+      whatsapp_settings: {
+        Row: WhatsappSettings;
+        Insert: { owner_id: string } & Partial<Omit<WhatsappSettings, "owner_id">>;
+        Update: Partial<Omit<WhatsappSettings, "owner_id">>;
+        Relationships: [];
+      };
+      whatsapp_reminders_log: {
+        Row: {
+          id: string;
+          owner_id: string;
+          installment_id: string;
+          reminder_type: ReminderType;
+          status: "sent" | "failed";
+          error: string | null;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          owner_id: string;
+          installment_id: string;
+          reminder_type: ReminderType;
+          status?: "sent" | "failed";
+          error?: string | null;
+          created_at?: string;
+        };
+        Update: Partial<{ status: "sent" | "failed"; error: string | null }>;
         Relationships: [];
       };
     };

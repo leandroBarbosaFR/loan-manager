@@ -32,7 +32,7 @@ export function AppShell({
             width={70}
             height={46}
             priority
-            className="h-7 w-auto"
+            className="h-10 w-auto"
           />
         </div>
         <Button
@@ -59,7 +59,7 @@ export function AppShell({
             width={70}
             height={46}
             priority
-            className="h-8 w-auto"
+            className="h-14 w-auto"
           />
         </div>
         <Nav onNavigate={() => setOpen(false)} isSuperAdmin={isSuperAdmin} />

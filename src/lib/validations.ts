@@ -36,6 +36,24 @@ const money = z.coerce
   .max(99_999_999.99, "Amount is too large");
 
 // ---------------------------------------------------------------------------
+// WhatsApp reminder settings
+// ---------------------------------------------------------------------------
+export const whatsappSettingsSchema = z.object({
+  enabled: z.coerce.boolean().default(false),
+  send_hour: z.coerce.number().int().min(0).max(23),
+  timezone: z.string().trim().min(1).max(60),
+  lang: z.string().trim().min(2).max(10),
+  template_2d: optionalShort(200),
+  template_1d: optionalShort(200),
+  template_due: optionalShort(200),
+  phrase_2d: optionalText,
+  phrase_1d: optionalText,
+  phrase_due: optionalText,
+});
+
+export type WhatsappSettingsInput = z.infer<typeof whatsappSettingsSchema>;
+
+// ---------------------------------------------------------------------------
 // Users (super-admin account management)
 // ---------------------------------------------------------------------------
 export const newUserSchema = z.object({

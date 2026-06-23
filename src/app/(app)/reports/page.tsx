@@ -40,10 +40,14 @@ function LoanReportTable({ rows, t }: { rows: LoanReportRow[]; t: Translator }) 
       <TableHeader>
         <TableRow>
           <TableHead>{t("common.customer")}</TableHead>
-          <TableHead>{t("reports.colDate")}</TableHead>
+          <TableHead className="hidden md:table-cell">{t("reports.colDate")}</TableHead>
           <TableHead className="text-right">{t("reports.colPrincipal")}</TableHead>
-          <TableHead className="text-right">{t("reports.colReceivable")}</TableHead>
-          <TableHead className="text-right">{t("reports.colPaid")}</TableHead>
+          <TableHead className="hidden text-right lg:table-cell">
+            {t("reports.colReceivable")}
+          </TableHead>
+          <TableHead className="hidden text-right md:table-cell">
+            {t("reports.colPaid")}
+          </TableHead>
           <TableHead className="text-right">{t("reports.colOutstanding")}</TableHead>
           <TableHead>{t("common.status")}</TableHead>
         </TableRow>
@@ -52,14 +56,16 @@ function LoanReportTable({ rows, t }: { rows: LoanReportRow[]; t: Translator }) 
         {rows.map((r, i) => (
           <TableRow key={i}>
             <TableCell className="font-medium">{r.customer}</TableCell>
-            <TableCell>{formatDate(r.loan_date)}</TableCell>
+            <TableCell className="hidden md:table-cell">
+              {formatDate(r.loan_date)}
+            </TableCell>
             <TableCell className="text-right tabular-nums">
               {formatMoney(r.principal)}
             </TableCell>
-            <TableCell className="text-right tabular-nums">
+            <TableCell className="hidden text-right tabular-nums lg:table-cell">
               {formatMoney(r.receivable)}
             </TableCell>
-            <TableCell className="text-right tabular-nums">
+            <TableCell className="hidden text-right tabular-nums md:table-cell">
               {formatMoney(r.paid)}
             </TableCell>
             <TableCell className="text-right tabular-nums">

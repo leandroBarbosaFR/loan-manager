@@ -13,6 +13,7 @@ const LINKS: { href: string; key: MessageKey }[] = [
   { href: "/installments", key: "nav.installments" },
   { href: "/reports", key: "nav.reports" },
   { href: "/calculator", key: "nav.calculator" },
+  { href: "/whatsapp", key: "nav.whatsapp" },
 ];
 
 const ADMIN_LINKS: { href: string; key: MessageKey }[] = [

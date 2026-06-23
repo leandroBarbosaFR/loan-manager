@@ -19,18 +19,20 @@ export async function login(
     password: formData.get("password"),
   });
 
+  // Return stable codes (not text); the client localises them.
   if (!parsed.success) {
-    return {
-      ok: false,
-      fieldErrors: parsed.error.flatten().fieldErrors,
-    };
+    const fe = parsed.error.flatten().fieldErrors;
+    const fieldErrors: Record<string, string[]> = {};
+    if (fe.email) fieldErrors.email = ["invalid_email"];
+    if (fe.password) fieldErrors.password = ["password_required"];
+    return { ok: false, fieldErrors };
   }
 
   const supabase = await createClient();
   const { error } = await supabase.auth.signInWithPassword(parsed.data);
 
   if (error) {
-    return { ok: false, error: "Invalid email or password." };
+    return { ok: false, error: "invalid_credentials" };
   }
 
   redirect("/");

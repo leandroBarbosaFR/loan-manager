@@ -1,0 +1,126 @@
+"use client";
+
+import { useActionState } from "react";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { FormField, FormError } from "@/components/form-field";
+import { SubmitButton } from "@/components/submit-button";
+import type { ActionState } from "@/lib/action-state";
+import type { WhatsappSettings } from "@/types/database";
+import { useT } from "@/lib/i18n/context";
+import { saveWhatsappSettingsAction } from "./actions";
+
+export function WhatsappForm({ settings }: { settings: WhatsappSettings | null }) {
+  const t = useT();
+  const [state, formAction] = useActionState(saveWhatsappSettingsAction, null);
+
+  const sections = [
+    {
+      title: t("whatsapp.section2d"),
+      templateName: "template_2d",
+      phraseName: "phrase_2d",
+      template: settings?.template_2d ?? "",
+      phrase: settings?.phrase_2d ?? "",
+    },
+    {
+      title: t("whatsapp.section1d"),
+      templateName: "template_1d",
+      phraseName: "phrase_1d",
+      template: settings?.template_1d ?? "",
+      phrase: settings?.phrase_1d ?? "",
+    },
+    {
+      title: t("whatsapp.sectionDue"),
+      templateName: "template_due",
+      phraseName: "phrase_due",
+      template: settings?.template_due ?? "",
+      phrase: settings?.phrase_due ?? "",
+    },
+  ];
+
+  return (
+    <form action={formAction} className="max-w-lg">
+      <FormError message={state?.error} />
+      {state?.ok ? (
+        <div className="mb-4 border border-border bg-muted px-3 py-2 text-sm">
+          {t("whatsapp.saved")}
+        </div>
+      ) : null}
+
+      <p className="mb-4 text-xs text-muted-foreground">{t("whatsapp.intro")}</p>
+
+      <label className="mb-4 flex items-center gap-2 text-sm font-medium">
+        <input
+          type="checkbox"
+          name="enabled"
+          defaultChecked={settings?.enabled ?? false}
+          className="h-4 w-4 border-border"
+        />
+        {t("whatsapp.enabled")}
+      </label>
+
+      <div className="grid grid-cols-1 gap-x-4 sm:grid-cols-3">
+        <FormField
+          label={t("whatsapp.sendHour")}
+          htmlFor="send_hour"
+          errors={state?.fieldErrors?.send_hour}
+        >
+          <Input
+            id="send_hour"
+            name="send_hour"
+            type="number"
+            min="0"
+            max="23"
+            defaultValue={settings?.send_hour ?? 9}
+            required
+          />
+        </FormField>
+        <FormField
+          label={t("whatsapp.timezone")}
+          htmlFor="timezone"
+          errors={state?.fieldErrors?.timezone}
+        >
+          <Input
+            id="timezone"
+            name="timezone"
+            defaultValue={settings?.timezone ?? "America/Sao_Paulo"}
+            required
+          />
+        </FormField>
+        <FormField
+          label={t("whatsapp.lang")}
+          htmlFor="lang"
+          errors={state?.fieldErrors?.lang}
+        >
+          <Input
+            id="lang"
+            name="lang"
+            defaultValue={settings?.lang ?? "pt_BR"}
+            required
+          />
+        </FormField>
+      </div>
+
+      {sections.map((s) => (
+        <fieldset key={s.templateName} className="mb-4 border border-border p-4">
+          <legend className="px-1 text-xs font-medium uppercase tracking-wide text-muted-foreground">
+            {s.title}
+          </legend>
+          <FormField label={t("whatsapp.templateName")} htmlFor={s.templateName}>
+            <Input
+              id={s.templateName}
+              name={s.templateName}
+              defaultValue={s.template}
+              placeholder="payment_reminder_2d"
+            />
+          </FormField>
+          <FormField label={t("whatsapp.phrase")} htmlFor={s.phraseName}>
+            <Textarea id={s.phraseName} name={s.phraseName} defaultValue={s.phrase} />
+          </FormField>
+        </fieldset>
+      ))}
+
+      <SubmitButton>{t("whatsapp.save")}</SubmitButton>
+    </form>
+  );
+}

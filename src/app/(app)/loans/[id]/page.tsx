@@ -136,8 +136,12 @@ export default async function LoanDetailPage({
               <TableHead>#</TableHead>
               <TableHead>{t("loanDetail.colDueDate")}</TableHead>
               <TableHead className="text-right">{t("common.amount")}</TableHead>
-              <TableHead className="text-right">{t("common.paid")}</TableHead>
-              <TableHead>{t("loanDetail.colPaidOn")}</TableHead>
+              <TableHead className="hidden text-right sm:table-cell">
+                {t("common.paid")}
+              </TableHead>
+              <TableHead className="hidden md:table-cell">
+                {t("loanDetail.colPaidOn")}
+              </TableHead>
               <TableHead>{t("common.status")}</TableHead>
               <TableHead />
             </TableRow>
@@ -156,12 +160,14 @@ export default async function LoanDetailPage({
                 <TableCell className="text-right tabular-nums">
                   {formatMoney(inst.amount)}
                 </TableCell>
-                <TableCell className="text-right tabular-nums">
+                <TableCell className="hidden text-right tabular-nums sm:table-cell">
                   {inst.paid_amount != null
                     ? formatMoney(inst.paid_amount)
                     : t("common.dash")}
                 </TableCell>
-                <TableCell>{formatDate(inst.paid_at)}</TableCell>
+                <TableCell className="hidden md:table-cell">
+                  {formatDate(inst.paid_at)}
+                </TableCell>
                 <TableCell>
                   <StatusBadge status={effectiveInstallmentStatus(inst)} />
                 </TableCell>

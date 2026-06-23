@@ -196,8 +196,12 @@ export default async function CustomerDetailPage({
             <TableRow>
               <TableHead>{t("common.date")}</TableHead>
               <TableHead className="text-right">{t("customerDetail.colPrincipal")}</TableHead>
-              <TableHead className="text-right">{t("customerDetail.colReceivable")}</TableHead>
-              <TableHead className="text-right">{t("common.paid")}</TableHead>
+              <TableHead className="hidden text-right md:table-cell">
+                {t("customerDetail.colReceivable")}
+              </TableHead>
+              <TableHead className="hidden text-right sm:table-cell">
+                {t("common.paid")}
+              </TableHead>
               <TableHead className="text-right">{t("customerDetail.colOutstanding")}</TableHead>
               <TableHead>{t("common.status")}</TableHead>
               <TableHead />
@@ -212,10 +216,10 @@ export default async function CustomerDetailPage({
                   <TableCell className="text-right tabular-nums">
                     {formatMoney(lt.principal)}
                   </TableCell>
-                  <TableCell className="text-right tabular-nums">
+                  <TableCell className="hidden text-right tabular-nums md:table-cell">
                     {formatMoney(lt.receivable)}
                   </TableCell>
-                  <TableCell className="text-right tabular-nums">
+                  <TableCell className="hidden text-right tabular-nums sm:table-cell">
                     {formatMoney(lt.paid)}
                   </TableCell>
                   <TableCell className="text-right tabular-nums">
