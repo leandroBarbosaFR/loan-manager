@@ -20,9 +20,11 @@ function parse(formData: FormData) {
     phone: formData.get("phone"),
     street: formData.get("street"),
     street_number: formData.get("street_number"),
+    neighborhood: formData.get("neighborhood"),
     cep: formData.get("cep"),
     city: formData.get("city"),
     state: formData.get("state"),
+    referred_by_id: formData.get("referred_by_id"),
     notes: formData.get("notes"),
   });
 }
@@ -54,7 +56,12 @@ export async function updateCustomerAction(
   const parsed = parse(formData);
   if (!parsed.success) return zodToFieldErrors(parsed.error);
 
-  await updateCustomer(id, parsed.data);
+  // A customer cannot refer themselves.
+  const data =
+    parsed.data.referred_by_id === id
+      ? { ...parsed.data, referred_by_id: null }
+      : parsed.data;
+  await updateCustomer(id, data);
   await addCustomerDocuments(id, documentFiles(formData));
   revalidatePath("/customers");
   revalidatePath(`/customers/${id}`);

@@ -16,6 +16,19 @@ const optionalShort = (max: number) =>
     .optional()
     .transform((v) => (v && v.length > 0 ? v : null));
 
+/** Optional UUID reference (empty → null). */
+const optionalUuid = z
+  .string()
+  .trim()
+  .optional()
+  .transform((v) => (v && v.length > 0 ? v : null))
+  .refine(
+    (v) =>
+      v === null ||
+      /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(v),
+    { message: "Invalid reference" },
+  );
+
 /** Optional `YYYY-MM-DD` date (empty → null). */
 const optionalDate = z
   .string()
@@ -74,9 +87,11 @@ export const customerSchema = z.object({
   phone: optionalShort(40),
   street: optionalShort(200),
   street_number: optionalShort(20),
+  neighborhood: optionalShort(120),
   cep: optionalShort(20),
   city: optionalShort(120),
   state: optionalShort(60),
+  referred_by_id: optionalUuid,
   notes: optionalText,
 });
 

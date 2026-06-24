@@ -41,6 +41,10 @@ export default async function CustomerDetailPage({
   ]);
   if (!customer) notFound();
 
+  const referredBy = customer.referred_by_id
+    ? await getCustomer(customer.referred_by_id)
+    : null;
+
   const docs = await Promise.all(
     documents.map(async (doc) => ({
       ...doc,
@@ -54,6 +58,7 @@ export default async function CustomerDetailPage({
 
   const addressLines = [
     [customer.street, customer.street_number].filter(Boolean).join(", "),
+    customer.neighborhood,
     [customer.city, customer.state].filter(Boolean).join(" - "),
     customer.cep,
   ].filter((line) => line && line.length > 0);
@@ -114,6 +119,21 @@ export default async function CustomerDetailPage({
                 {addressLines.length > 0
                   ? addressLines.map((line, i) => <div key={i}>{line}</div>)
                   : t("common.dash")}
+              </dd>
+            </div>
+            <div className="flex justify-between gap-4">
+              <dt className="text-muted-foreground">{t("customerDetail.referredBy")}</dt>
+              <dd className="text-right">
+                {referredBy ? (
+                  <Link
+                    href={`/customers/${referredBy.id}`}
+                    className="underline-offset-2 hover:underline"
+                  >
+                    {referredBy.name}
+                  </Link>
+                ) : (
+                  t("common.dash")
+                )}
               </dd>
             </div>
           </dl>

@@ -5,6 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { FormField, FormError } from "@/components/form-field";
 import { SubmitButton } from "@/components/submit-button";
+import { CustomerSearchSelect } from "@/components/customer-search-select";
 import type { ActionState } from "@/lib/action-state";
 import type { Customer } from "@/types/database";
 import { useT } from "@/lib/i18n/context";
@@ -19,12 +20,15 @@ export function CustomerForm({
   customer,
   requireDetails = false,
   submitLabel,
+  referralOptions = [],
 }: {
   action: Action;
   customer?: Customer;
   /** When true (new customers), profile/address fields are required in the UI. */
   requireDetails?: boolean;
   submitLabel?: string;
+  /** Other customers that can be picked as the referrer ("indicação"). */
+  referralOptions?: { id: string; name: string }[];
 }) {
   const t = useT();
   const [state, formAction] = useActionState(action, null);
@@ -119,6 +123,19 @@ export function CustomerForm({
           </FormField>
         </div>
 
+        <FormField
+          label={t("customerForm.neighborhood")}
+          htmlFor="neighborhood"
+          errors={state?.fieldErrors?.neighborhood}
+        >
+          <Input
+            id="neighborhood"
+            name="neighborhood"
+            defaultValue={customer?.neighborhood ?? ""}
+            required={requireDetails}
+          />
+        </FormField>
+
         <div className="grid grid-cols-1 gap-x-4 sm:grid-cols-3">
           <FormField
             label={t("customerForm.cep")}
@@ -161,6 +178,21 @@ export function CustomerForm({
           </FormField>
         </div>
       </fieldset>
+
+      <FormField
+        label={t("customerForm.referredBy")}
+        htmlFor="referred_by_id"
+        hint={t("customerForm.referredByHint")}
+        errors={state?.fieldErrors?.referred_by_id}
+      >
+        <CustomerSearchSelect
+          name="referred_by_id"
+          options={referralOptions}
+          defaultId={customer?.referred_by_id ?? null}
+          placeholder={t("customerForm.referredByPlaceholder")}
+          clearLabel={t("common.clear")}
+        />
+      </FormField>
 
       <FormField
         label={t("customerForm.documents")}

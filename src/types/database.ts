@@ -49,9 +49,12 @@ export type Customer = {
   phone_ddd: string | null;
   street: string | null;
   street_number: string | null;
+  neighborhood: string | null;
   cep: string | null;
   city: string | null;
   state: string | null;
+  /** The customer who referred this one ("indicação"). */
+  referred_by_id: string | null;
   created_at: string;
 };
 
