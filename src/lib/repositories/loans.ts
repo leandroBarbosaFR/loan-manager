@@ -6,8 +6,14 @@ import type {
   Customer,
   Installment,
 } from "@/types/database";
-import type { LoanInput } from "@/lib/validations";
-import { deriveLoanStatus, planInstallments, round2 } from "@/lib/calc";
+import type { LoanInput, RenegotiateInput } from "@/lib/validations";
+import {
+  deriveLoanStatus,
+  planInstallments,
+  round2,
+  totalLateCharges,
+  renegotiationPrincipal,
+} from "@/lib/calc";
 import { addMonths, today } from "@/lib/format";
 
 type LoanListRow = Loan & {
@@ -75,6 +81,8 @@ export async function createLoan(input: LoanInput): Promise<Loan> {
       loan_date: input.loan_date,
       notes: input.notes,
       rollover_fee: rolloverFee,
+      late_fee_percent: input.late_fee_percent,
+      late_interest_percent_month: input.late_interest_percent_month,
       status: "open",
     })
     .select("*")
@@ -136,7 +144,13 @@ export async function updateLoan(
   id: string,
   input: Pick<
     LoanInput,
-    "customer_id" | "principal" | "total_receivable" | "loan_date" | "notes"
+    | "customer_id"
+    | "principal"
+    | "total_receivable"
+    | "loan_date"
+    | "notes"
+    | "late_fee_percent"
+    | "late_interest_percent_month"
   >,
 ): Promise<Loan> {
   const supabase = await createClient();
@@ -148,6 +162,8 @@ export async function updateLoan(
       total_receivable: input.total_receivable,
       loan_date: input.loan_date,
       notes: input.notes,
+      late_fee_percent: input.late_fee_percent,
+      late_interest_percent_month: input.late_interest_percent_month,
     })
     .eq("id", id)
     .select("*")
@@ -196,7 +212,16 @@ export async function rollOverLoan(loanId: string): Promise<void> {
   }
   const nextDue = addMonths(pendingFee.due_date, 1);
 
-  // 1. Mark this period's fee collected.
+  // 1. Mark this period's fee collected — record it in the ledger and update
+  //    the installment cache to match.
+  const { error: ledgerError } = await supabase.from("payments").insert({
+    owner_id: loan.owner_id,
+    loan_id: loanId,
+    installment_id: pendingFee.id,
+    amount: fee,
+    paid_at: today(),
+  });
+  if (ledgerError) throw ledgerError;
   const { error: payError } = await supabase
     .from("installments")
     .update({ paid_amount: fee, paid_at: today(), status: "paid" })
@@ -235,6 +260,128 @@ export async function rollOverLoan(loanId: string): Promise<void> {
 }
 
 /** Recomputes and persists a loan's status from its installments. */
+/**
+ * Renegotiates a loan: carries its outstanding balance (optionally + late
+ * charges, − discount) into a NEW loan with a fresh schedule, then closes the
+ * old loan at what was actually collected. No cash payment is recorded for the
+ * carried balance, so received/cash reports stay accurate.
+ */
+export async function renegotiateLoan(
+  oldId: string,
+  input: RenegotiateInput,
+): Promise<Loan> {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  const ownerId = user!.id;
+
+  const { data: oldLoan, error } = await supabase
+    .from("loans")
+    .select("*")
+    .eq("id", oldId)
+    .single();
+  if (error) throw error;
+  if (oldLoan.renegotiated_to_id) {
+    throw new Error("This loan was already renegotiated.");
+  }
+
+  const { data: insts, error: instErr } = await supabase
+    .from("installments")
+    .select("*")
+    .eq("loan_id", oldId);
+  if (instErr) throw instErr;
+  const rows = (insts ?? []) as Installment[];
+
+  const asOf = today();
+  const lateCfg = {
+    feePercent: oldLoan.late_fee_percent ?? 0,
+    interestPercentMonth: oldLoan.late_interest_percent_month ?? 0,
+  };
+  const lateTotal = totalLateCharges(rows, asOf, lateCfg);
+  const outstanding = round2(
+    rows
+      .filter((i) => !i.paid_at && i.amount - (i.paid_amount ?? 0) > 0)
+      .reduce((s, i) => s + (i.amount - (i.paid_amount ?? 0)), 0),
+  );
+
+  const principal = renegotiationPrincipal(outstanding, lateTotal, {
+    includeLateCharges: input.include_late_charges,
+    discount: input.discount,
+  });
+  if (principal <= 0) throw new Error("There is no balance to renegotiate.");
+  if (input.total_receivable < principal) {
+    throw new Error(
+      "The new total must be at least the carried balance.",
+    );
+  }
+
+  // 1. Create the new loan, linked to the old one.
+  const { data: newLoan, error: createErr } = await supabase
+    .from("loans")
+    .insert({
+      owner_id: ownerId,
+      customer_id: oldLoan.customer_id,
+      principal,
+      total_receivable: input.total_receivable,
+      loan_date: asOf,
+      late_fee_percent: oldLoan.late_fee_percent,
+      late_interest_percent_month: oldLoan.late_interest_percent_month,
+      renegotiated_from_id: oldId,
+      status: "open",
+    })
+    .select("*")
+    .single();
+  if (createErr) throw createErr;
+
+  // 2. Fresh schedule for the new loan.
+  const planned = planInstallments(
+    input.total_receivable,
+    input.installment_count,
+    input.first_due_date,
+  );
+  const { error: newInstErr } = await supabase.from("installments").insert(
+    planned.map((p) => ({
+      owner_id: ownerId,
+      loan_id: newLoan.id,
+      due_date: p.due_date,
+      amount: p.amount,
+      status: "pending" as const,
+    })),
+  );
+  if (newInstErr) throw newInstErr;
+  await syncLoanStatus(newLoan.id);
+
+  // 3. Close the old loan at what was actually collected.
+  const paidSoFar = round2(rows.reduce((s, i) => s + (i.paid_amount ?? 0), 0));
+  for (const i of rows) {
+    if (i.paid_at) continue;
+    if ((i.paid_amount ?? 0) <= 0) {
+      // Fully unpaid (no ledger payments) → safe to remove.
+      await supabase.from("installments").delete().eq("id", i.id);
+    } else {
+      // Partially paid → close it at the collected amount; the remainder is
+      // carried into the new loan. Keeps the real payments intact.
+      await supabase
+        .from("installments")
+        .update({ amount: i.paid_amount ?? 0, paid_at: asOf, status: "paid" })
+        .eq("id", i.id);
+    }
+  }
+  const { error: closeErr } = await supabase
+    .from("loans")
+    .update({
+      total_receivable: paidSoFar,
+      status: "paid",
+      renegotiated_to_id: newLoan.id,
+      renegotiated_at: new Date().toISOString(),
+    })
+    .eq("id", oldId);
+  if (closeErr) throw closeErr;
+
+  return newLoan;
+}
+
 export async function syncLoanStatus(loanId: string): Promise<void> {
   const supabase = await createClient();
   const { data, error } = await supabase

@@ -6,6 +6,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { FormField, FormError } from "@/components/form-field";
 import { SubmitButton } from "@/components/submit-button";
 import { CustomerSearchSelect } from "@/components/customer-search-select";
+import { UnsavedChangesGuard } from "@/components/unsaved-changes-guard";
 import type { ActionState } from "@/lib/action-state";
 import type { Customer } from "@/types/database";
 import { useT } from "@/lib/i18n/context";
@@ -34,64 +35,68 @@ export function CustomerForm({
   const [state, formAction] = useActionState(action, null);
 
   return (
-    <form action={formAction} className="max-w-lg">
+    <form action={formAction} className="max-w-3xl">
+      <UnsavedChangesGuard />
       <FormError message={state?.error} />
 
-      <FormField
-        label={t("customerForm.fullName")}
-        htmlFor="name"
-        errors={state?.fieldErrors?.name}
-      >
-        <Input id="name" name="name" defaultValue={customer?.name ?? ""} required />
-      </FormField>
-
-      <FormField
-        label={t("customerForm.birthday")}
-        htmlFor="birthday"
-        errors={state?.fieldErrors?.birthday}
-      >
-        <Input
-          id="birthday"
-          name="birthday"
-          type="date"
-          defaultValue={customer?.birthday ?? ""}
-          required={requireDetails}
-        />
-      </FormField>
-
-      <div className="grid grid-cols-1 gap-x-4 sm:grid-cols-[6rem_1fr]">
+      <div className="grid grid-cols-1 gap-x-4 sm:grid-cols-2">
         <FormField
-          label={t("customerForm.ddd")}
-          htmlFor="phone_ddd"
-          errors={state?.fieldErrors?.phone_ddd}
+          label={t("customerForm.fullName")}
+          htmlFor="name"
+          errors={state?.fieldErrors?.name}
+          className="sm:col-span-2"
+        >
+          <Input id="name" name="name" defaultValue={customer?.name ?? ""} required />
+        </FormField>
+
+        <FormField
+          label={t("customerForm.birthday")}
+          htmlFor="birthday"
+          errors={state?.fieldErrors?.birthday}
         >
           <Input
-            id="phone_ddd"
-            name="phone_ddd"
-            type="tel"
-            inputMode="numeric"
-            placeholder="11"
-            defaultValue={customer?.phone_ddd ?? ""}
+            id="birthday"
+            name="birthday"
+            type="date"
+            defaultValue={customer?.birthday ?? ""}
             required={requireDetails}
           />
         </FormField>
-        <FormField
-          label={t("customerForm.phoneNumber")}
-          htmlFor="phone"
-          errors={state?.fieldErrors?.phone}
-        >
-          <Input
-            id="phone"
-            name="phone"
-            type="tel"
-            placeholder="91234-5678"
-            defaultValue={customer?.phone ?? ""}
-            required={requireDetails}
-          />
-        </FormField>
+
+        <div className="grid grid-cols-[6rem_1fr] gap-x-4">
+          <FormField
+            label={t("customerForm.ddd")}
+            htmlFor="phone_ddd"
+            errors={state?.fieldErrors?.phone_ddd}
+          >
+            <Input
+              id="phone_ddd"
+              name="phone_ddd"
+              type="tel"
+              inputMode="numeric"
+              placeholder="11"
+              defaultValue={customer?.phone_ddd ?? ""}
+              required={requireDetails}
+            />
+          </FormField>
+          <FormField
+            label={t("customerForm.phoneNumber")}
+            htmlFor="phone"
+            errors={state?.fieldErrors?.phone}
+          >
+            <Input
+              id="phone"
+              name="phone"
+              type="tel"
+              placeholder="91234-5678"
+              defaultValue={customer?.phone ?? ""}
+              required={requireDetails}
+            />
+          </FormField>
+        </div>
       </div>
 
-      <fieldset className="mb-4 border border-border p-4">
+      <fieldset className="mb-4 rounded-lg border border-border bg-white p-4 shadow-sm">
         <legend className="px-1 text-xs font-medium uppercase tracking-wide text-muted-foreground">
           {t("customerForm.address")}
         </legend>

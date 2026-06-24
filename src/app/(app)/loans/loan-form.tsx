@@ -6,6 +6,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select } from "@/components/ui/select";
 import { FormField, FormError } from "@/components/form-field";
 import { SubmitButton } from "@/components/submit-button";
+import { UnsavedChangesGuard } from "@/components/unsaved-changes-guard";
 import type { ActionState } from "@/lib/action-state";
 import type { Customer, Loan } from "@/types/database";
 import { distributeInstallments, round2 } from "@/lib/calc";
@@ -108,7 +109,8 @@ export function LoanForm({
   }
 
   return (
-    <form action={formAction} className="max-w-lg">
+    <form action={formAction} className="max-w-3xl">
+      <UnsavedChangesGuard />
       <FormError message={state?.error} />
 
       <FormField
@@ -133,23 +135,39 @@ export function LoanForm({
         </Select>
       </FormField>
 
-      <FormField
-        label={t("loanForm.amountLoaned")}
-        htmlFor="principal"
-        errors={state?.fieldErrors?.principal}
-      >
-        <Input
-          id="principal"
-          name="principal"
-          type="number"
-          step="0.01"
-          min="0"
-          inputMode="decimal"
-          value={amount}
-          onChange={(e) => setAmount(e.target.value)}
-          required
-        />
-      </FormField>
+      <div className="grid grid-cols-1 gap-x-4 sm:grid-cols-2">
+        <FormField
+          label={t("loanForm.amountLoaned")}
+          htmlFor="principal"
+          errors={state?.fieldErrors?.principal}
+        >
+          <Input
+            id="principal"
+            name="principal"
+            type="number"
+            step="0.01"
+            min="0"
+            inputMode="decimal"
+            value={amount}
+            onChange={(e) => setAmount(e.target.value)}
+            required
+          />
+        </FormField>
+
+        <FormField
+          label={t("loanForm.loanDate")}
+          htmlFor="loan_date"
+          errors={state?.fieldErrors?.loan_date}
+        >
+          <Input
+            id="loan_date"
+            name="loan_date"
+            type="date"
+            defaultValue={loan?.loan_date ?? today()}
+            required
+          />
+        </FormField>
+      </div>
 
       {!rollover ? (
         <label className="mb-2 flex items-center gap-2 text-sm font-medium">
@@ -216,19 +234,48 @@ export function LoanForm({
         />
       </FormField>
 
-      <FormField
-        label={t("loanForm.loanDate")}
-        htmlFor="loan_date"
-        errors={state?.fieldErrors?.loan_date}
-      >
-        <Input
-          id="loan_date"
-          name="loan_date"
-          type="date"
-          defaultValue={loan?.loan_date ?? today()}
-          required
-        />
-      </FormField>
+      <fieldset className="mb-4 rounded-lg border border-border bg-white p-4 shadow-sm">
+        <legend className="px-1 text-xs font-medium uppercase tracking-wide text-muted-foreground">
+          {t("loanForm.lateSection")}
+        </legend>
+        <p className="mb-3 text-xs text-muted-foreground">
+          {t("loanForm.lateHint")}
+        </p>
+        <div className="grid grid-cols-1 gap-x-4 sm:grid-cols-2">
+          <FormField
+            label={t("loanForm.lateFee")}
+            htmlFor="late_fee_percent"
+            errors={state?.fieldErrors?.late_fee_percent}
+          >
+            <Input
+              id="late_fee_percent"
+              name="late_fee_percent"
+              type="number"
+              step="0.01"
+              min="0"
+              inputMode="decimal"
+              placeholder="2"
+              defaultValue={loan?.late_fee_percent ?? ""}
+            />
+          </FormField>
+          <FormField
+            label={t("loanForm.lateInterest")}
+            htmlFor="late_interest_percent_month"
+            errors={state?.fieldErrors?.late_interest_percent_month}
+          >
+            <Input
+              id="late_interest_percent_month"
+              name="late_interest_percent_month"
+              type="number"
+              step="0.01"
+              min="0"
+              inputMode="decimal"
+              placeholder="1"
+              defaultValue={loan?.late_interest_percent_month ?? ""}
+            />
+          </FormField>
+        </div>
+      </fieldset>
 
       <FormField
         label={t("loanForm.notes")}
@@ -239,7 +286,7 @@ export function LoanForm({
       </FormField>
 
       {allowInstallments ? (
-        <div className="mb-4 border border-border p-4">
+        <div className="mb-4 rounded-lg border border-border bg-white p-4 shadow-sm">
           <label className="flex items-center gap-2 text-sm font-medium">
             <input
               type="checkbox"
@@ -290,7 +337,7 @@ export function LoanForm({
       ) : null}
 
       {allowInstallments && !rollover ? (
-        <div className="mb-4 border border-border p-4">
+        <div className="mb-4 rounded-lg border border-border bg-white p-4 shadow-sm">
           <label className="flex items-center gap-2 text-sm font-medium">
             <input
               type="checkbox"

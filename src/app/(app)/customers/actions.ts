@@ -45,7 +45,7 @@ export async function createCustomerAction(
   const customer = await createCustomer(parsed.data);
   await addCustomerDocuments(customer.id, documentFiles(formData));
   revalidatePath("/customers");
-  redirect(`/customers/${customer.id}`);
+  redirect(`/customers/${customer.id}?flash=customer_created`);
 }
 
 export async function updateCustomerAction(
@@ -65,13 +65,13 @@ export async function updateCustomerAction(
   await addCustomerDocuments(id, documentFiles(formData));
   revalidatePath("/customers");
   revalidatePath(`/customers/${id}`);
-  redirect(`/customers/${id}`);
+  redirect(`/customers/${id}?flash=customer_updated`);
 }
 
 export async function deleteCustomerAction(id: string): Promise<void> {
   await deleteCustomer(id);
   revalidatePath("/customers");
-  redirect("/customers");
+  redirect("/customers?flash=customer_deleted");
 }
 
 export async function deleteCustomerDocumentAction(

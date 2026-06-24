@@ -135,19 +135,19 @@ export function Calculator() {
   }, [inputDigit, chooseOperator, percent, equals, backspace, reset]);
 
   return (
-    <div className="max-w-xs border border-border">
-      <div className="flex min-h-[5rem] flex-col items-end justify-end gap-1 border-b border-border px-4 py-3">
+    <div className="max-w-xs overflow-hidden rounded-xl border border-border bg-white shadow-sm">
+      <div className="flex min-h-[6rem] flex-col items-end justify-end gap-1 bg-muted/40 px-5 py-4">
         <span className="h-4 text-xs text-muted-foreground tabular-nums">
           {previous !== null && operator
             ? `${formatNumber(previous)} ${operator}`
             : ""}
         </span>
-        <span className="w-full truncate text-right text-3xl font-light tabular-nums">
+        <span className="w-full truncate text-right text-4xl font-light tabular-nums text-foreground">
           {display}
         </span>
       </div>
 
-      <div className="grid grid-cols-4">
+      <div className="grid grid-cols-4 gap-2 p-3">
         <Key label="AC" onClick={reset} variant="muted" />
         <Key label="⌫" onClick={backspace} variant="muted" />
         <Key label="%" onClick={percent} variant="muted" />
@@ -193,13 +193,13 @@ function Key({
       type="button"
       onClick={onClick}
       className={cn(
-        "-mb-px -mr-px h-14 border border-border text-lg tabular-nums focus-visible:relative focus-visible:z-10 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-black",
+        "h-14 rounded-lg text-lg font-medium tabular-nums transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1",
         variant === "op"
-          ? "bg-black text-white hover:bg-black/80"
+          ? "bg-primary text-primary-foreground hover:bg-primary-hover"
           : variant === "muted"
-            ? "bg-muted text-black hover:bg-accent"
-            : "bg-white text-black hover:bg-muted",
-        active && "ring-2 ring-inset ring-white",
+            ? "bg-muted text-muted-foreground hover:bg-accent hover:text-accent-foreground"
+            : "border border-border bg-white text-foreground hover:bg-muted",
+        active && "ring-2 ring-ring ring-offset-1",
       )}
     >
       {label}

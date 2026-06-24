@@ -43,6 +43,23 @@ const isoDate = z
   .string()
   .regex(/^\d{4}-\d{2}-\d{2}$/, "Use a valid date (YYYY-MM-DD)");
 
+/** Optional percentage (empty → 0). */
+const percent = z.coerce
+  .number({ invalid_type_error: "Enter a valid percentage" })
+  .min(0, "Cannot be negative")
+  .max(1000, "Percentage is too large")
+  .optional()
+  .default(0);
+
+/** Optional whole number (empty → null). */
+const optionalInt = z
+  .preprocess(
+    (v) => (v === "" || v === null || v === undefined ? undefined : v),
+    z.coerce.number().int().min(0).max(1_000_000),
+  )
+  .optional()
+  .transform((v) => (v === undefined ? null : v));
+
 const money = z.coerce
   .number({ invalid_type_error: "Enter a valid amount" })
   .nonnegative("Amount cannot be negative")
@@ -54,6 +71,7 @@ const money = z.coerce
 export const whatsappSettingsSchema = z.object({
   enabled: z.coerce.boolean().default(false),
   send_hour: z.coerce.number().int().min(0).max(23),
+  send_minute: z.coerce.number().int().min(0).max(59).default(0),
   timezone: z.string().trim().min(1).max(60),
   lang: z.string().trim().min(2).max(10),
   template_2d: optionalShort(200),
@@ -98,6 +116,56 @@ export const customerSchema = z.object({
 export type CustomerInput = z.infer<typeof customerSchema>;
 
 // ---------------------------------------------------------------------------
+// Vehicles (rental fleet: cars & motorcycles)
+// ---------------------------------------------------------------------------
+export const vehicleSchema = z.object({
+  type: z.enum(["car", "motorcycle"]).default("car"),
+  name: z.string().trim().min(1, "Name is required").max(120),
+  brand: optionalShort(80),
+  model_year: optionalInt,
+  color: optionalShort(40),
+  plate: optionalShort(20),
+  chassis: optionalShort(40),
+  doors: optionalInt,
+  has_gps: z.coerce.boolean().optional().default(false),
+  can_remote_block: z.coerce.boolean().optional().default(false),
+  had_accident: z.coerce.boolean().optional().default(false),
+  has_insurance: z.coerce.boolean().optional().default(false),
+  insurance_company: optionalShort(120),
+  insurance_expiry: optionalDate,
+  ipva_paid: z.coerce.boolean().optional().default(false),
+  ipva_due_date: optionalDate,
+  status: z
+    .enum(["available", "rented", "maintenance", "inactive"])
+    .default("available"),
+  notes: optionalText,
+});
+
+export type VehicleInput = z.infer<typeof vehicleSchema>;
+
+export const maintenanceSchema = z.object({
+  service_date: isoDate,
+  description: z.string().trim().min(1, "Describe the service").max(300),
+  cost: money.optional().default(0),
+  odometer: optionalInt,
+});
+
+export type MaintenanceInput = z.infer<typeof maintenanceSchema>;
+
+export const rentalSchema = z.object({
+  vehicle_id: z.string().uuid("Select a vehicle"),
+  customer_id: z.string().uuid("Select a customer"),
+  period_type: z.enum(["daily", "weekly", "monthly"]),
+  period_count: z.coerce.number().int().min(1).max(365),
+  rate: money,
+  deposit: money.optional().default(0),
+  start_date: isoDate,
+  notes: optionalText,
+});
+
+export type RentalInput = z.infer<typeof rentalSchema>;
+
+// ---------------------------------------------------------------------------
 // Loans
 // ---------------------------------------------------------------------------
 export const loanSchema = z
@@ -107,6 +175,9 @@ export const loanSchema = z
     total_receivable: money,
     loan_date: isoDate,
     notes: optionalText,
+    // Late penalties (optional; 0 = none).
+    late_fee_percent: percent,
+    late_interest_percent_month: percent,
     // Interest-only / rollover loan: borrower can pay just the fee each period.
     rollover: z.coerce.boolean().optional().default(false),
     // Installment generation (optional).
@@ -161,6 +232,19 @@ export type LoanInput = z.infer<typeof loanSchema>;
 // ---------------------------------------------------------------------------
 // Installment schedule (editing due dates / amounts)
 // ---------------------------------------------------------------------------
+// ---------------------------------------------------------------------------
+// Loan renegotiation
+// ---------------------------------------------------------------------------
+export const renegotiateSchema = z.object({
+  include_late_charges: z.coerce.boolean().optional().default(false),
+  discount: money.optional().default(0),
+  total_receivable: money,
+  installment_count: z.coerce.number().int().min(1).max(120),
+  first_due_date: isoDate,
+});
+
+export type RenegotiateInput = z.infer<typeof renegotiateSchema>;
+
 export const installmentScheduleSchema = z.object({
   items: z
     .array(
@@ -180,8 +264,9 @@ export type InstallmentScheduleInput = z.infer<typeof installmentScheduleSchema>
 // Installment payment
 // ---------------------------------------------------------------------------
 export const installmentPaymentSchema = z.object({
-  paid_amount: money,
+  paid_amount: money.refine((v) => v > 0, "Enter an amount greater than zero"),
   paid_at: isoDate,
+  note: optionalShort(200),
 });
 
 export type InstallmentPaymentInput = z.infer<typeof installmentPaymentSchema>;

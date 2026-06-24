@@ -5,6 +5,8 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { FormField, FormError } from "@/components/form-field";
 import { SubmitButton } from "@/components/submit-button";
+import { UnsavedChangesGuard } from "@/components/unsaved-changes-guard";
+import { useActionToast } from "@/components/toast";
 import type { ActionState } from "@/lib/action-state";
 import type { WhatsappSettings } from "@/types/database";
 import { useT } from "@/lib/i18n/context";
@@ -13,6 +15,8 @@ import { saveWhatsappSettingsAction } from "./actions";
 export function WhatsappForm({ settings }: { settings: WhatsappSettings | null }) {
   const t = useT();
   const [state, formAction] = useActionState(saveWhatsappSettingsAction, null);
+
+  useActionToast(state, t("whatsapp.saved"));
 
   const sections = [
     {
@@ -39,13 +43,9 @@ export function WhatsappForm({ settings }: { settings: WhatsappSettings | null }
   ];
 
   return (
-    <form action={formAction} className="max-w-lg">
+    <form action={formAction} className="max-w-3xl">
+      <UnsavedChangesGuard />
       <FormError message={state?.error} />
-      {state?.ok ? (
-        <div className="mb-4 border border-border bg-muted px-3 py-2 text-sm">
-          {t("whatsapp.saved")}
-        </div>
-      ) : null}
 
       <p className="mb-4 text-xs text-muted-foreground">{t("whatsapp.intro")}</p>
 
@@ -62,16 +62,15 @@ export function WhatsappForm({ settings }: { settings: WhatsappSettings | null }
       <div className="grid grid-cols-1 gap-x-4 sm:grid-cols-3">
         <FormField
           label={t("whatsapp.sendHour")}
-          htmlFor="send_hour"
+          htmlFor="send_time"
           errors={state?.fieldErrors?.send_hour}
         >
           <Input
-            id="send_hour"
-            name="send_hour"
-            type="number"
-            min="0"
-            max="23"
-            defaultValue={settings?.send_hour ?? 9}
+            id="send_time"
+            name="send_time"
+            type="time"
+            step={900}
+            defaultValue={`${String(settings?.send_hour ?? 9).padStart(2, "0")}:${String(settings?.send_minute ?? 0).padStart(2, "0")}`}
             required
           />
         </FormField>
@@ -102,20 +101,34 @@ export function WhatsappForm({ settings }: { settings: WhatsappSettings | null }
       </div>
 
       {sections.map((s) => (
-        <fieldset key={s.templateName} className="mb-4 border border-border p-4">
+        <fieldset key={s.templateName} className="mb-4 rounded-lg border border-border bg-white p-4 shadow-sm">
           <legend className="px-1 text-xs font-medium uppercase tracking-wide text-muted-foreground">
             {s.title}
           </legend>
-          <FormField label={t("whatsapp.templateName")} htmlFor={s.templateName}>
+          <FormField
+            label={t("whatsapp.phrase")}
+            htmlFor={s.phraseName}
+            hint={t("whatsapp.phraseHint")}
+          >
+            <Textarea
+              id={s.phraseName}
+              name={s.phraseName}
+              defaultValue={s.phrase}
+              rows={3}
+              placeholder="Oi {nome}, sua parcela de {valor} vence em {data}."
+            />
+          </FormField>
+          <FormField
+            label={t("whatsapp.templateName")}
+            htmlFor={s.templateName}
+            hint={t("whatsapp.templateNameHint")}
+          >
             <Input
               id={s.templateName}
               name={s.templateName}
               defaultValue={s.template}
-              placeholder="payment_reminder_2d"
+              placeholder="payment_reminder"
             />
-          </FormField>
-          <FormField label={t("whatsapp.phrase")} htmlFor={s.phraseName}>
-            <Textarea id={s.phraseName} name={s.phraseName} defaultValue={s.phrase} />
           </FormField>
         </fieldset>
       ))}

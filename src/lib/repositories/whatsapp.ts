@@ -8,7 +8,11 @@ import type {
   ReminderType,
   WhatsappSettings,
 } from "@/types/database";
-import { sendTemplateMessage, toWhatsappNumber } from "@/lib/whatsapp";
+import {
+  renderMessage,
+  sendTemplateMessage,
+  toWhatsappNumber,
+} from "@/lib/whatsapp";
 import { addDays, formatDate, formatMoney, today } from "@/lib/format";
 
 // ---------------------------------------------------------------------------
@@ -68,12 +72,28 @@ export async function sendTestReminder(
   const number = toWhatsappNumber(null, to);
   if (!number) throw new Error("Enter a valid phone number (with DDD).");
 
+  const phrase =
+    which === "d2"
+      ? settings.phrase_2d
+      : which === "d1"
+        ? settings.phrase_1d
+        : settings.phrase_due;
+  if (!phrase) {
+    throw new Error("Write the message text for this reminder first.");
+  }
+
   const offset = which === "d2" ? 2 : which === "d1" ? 1 : 0;
+  const body = renderMessage(phrase, {
+    nome: "Maria",
+    data: formatDate(addDays(today(), offset)),
+    valor: formatMoney(100),
+  });
   await sendTemplateMessage({
     to: number,
     template,
     lang: settings.lang,
-    params: ["Maria", formatDate(addDays(today(), offset)), formatMoney(100)],
+    // Single body variable {{1}} = the full rendered message.
+    params: [body],
   });
 }
 
@@ -81,8 +101,10 @@ export async function sendTestReminder(
 // Cron processing (service role — runs across all users)
 // ---------------------------------------------------------------------------
 
-/** Local calendar date (YYYY-MM-DD) and hour (0-23) for a timezone, now. */
-function localNow(timezone: string): { date: string; hour: number } {
+/** Local date (YYYY-MM-DD), hour (0-23) and minute (0-59) for a timezone, now. */
+function localNow(
+  timezone: string,
+): { date: string; hour: number; minute: number } {
   const parts = new Intl.DateTimeFormat("en-CA", {
     timeZone: timezone,
     hour12: false,
@@ -90,11 +112,13 @@ function localNow(timezone: string): { date: string; hour: number } {
     month: "2-digit",
     day: "2-digit",
     hour: "2-digit",
+    minute: "2-digit",
   }).formatToParts(new Date());
   const get = (type: string) => parts.find((p) => p.type === type)?.value ?? "";
   let hour = parseInt(get("hour"), 10);
   if (hour === 24) hour = 0;
-  return { date: `${get("year")}-${get("month")}-${get("day")}`, hour };
+  const minute = parseInt(get("minute"), 10);
+  return { date: `${get("year")}-${get("month")}-${get("day")}`, hour, minute };
 }
 
 type InstallmentJoined = Installment & {
@@ -129,14 +153,36 @@ export async function processReminders(): Promise<ReminderRunResult> {
   if (error) throw error;
 
   for (const settings of settingsRows ?? []) {
-    const { date, hour } = localNow(settings.timezone);
-    if (hour !== settings.send_hour) continue;
+    const { date, hour, minute } = localNow(settings.timezone);
+    // Cron fires every 15 min; all timezone offsets are 15-min multiples, so
+    // the local minute is always 0/15/30/45 and matches the chosen step.
+    if (hour !== settings.send_hour || minute !== settings.send_minute) continue;
     result.processedUsers++;
 
-    const targets: { type: ReminderType; date: string; template: string | null }[] = [
-      { type: "d2", date: addDays(date, 2), template: settings.template_2d },
-      { type: "d1", date: addDays(date, 1), template: settings.template_1d },
-      { type: "due", date, template: settings.template_due },
+    const targets: {
+      type: ReminderType;
+      date: string;
+      template: string | null;
+      phrase: string | null;
+    }[] = [
+      {
+        type: "d2",
+        date: addDays(date, 2),
+        template: settings.template_2d,
+        phrase: settings.phrase_2d,
+      },
+      {
+        type: "d1",
+        date: addDays(date, 1),
+        template: settings.template_1d,
+        phrase: settings.phrase_1d,
+      },
+      {
+        type: "due",
+        date,
+        template: settings.template_due,
+        phrase: settings.phrase_due,
+      },
     ];
 
     const dates = targets.map((t) => t.date);
@@ -163,7 +209,7 @@ export async function processReminders(): Promise<ReminderRunResult> {
 
     for (const inst of installments) {
       const target = targets.find((t) => t.date === inst.due_date);
-      if (!target || !target.template) {
+      if (!target || !target.template || !target.phrase) {
         result.skipped++;
         continue;
       }
@@ -176,18 +222,20 @@ export async function processReminders(): Promise<ReminderRunResult> {
         continue;
       }
 
-      const params = [
-        customer.name.split(" ")[0] ?? customer.name,
-        formatDate(inst.due_date),
-        formatMoney(inst.amount),
-      ];
+      const firstName = customer.name.split(" ")[0] ?? customer.name;
+      const body = renderMessage(target.phrase, {
+        nome: firstName,
+        data: formatDate(inst.due_date),
+        valor: formatMoney(inst.amount),
+      });
 
       try {
         await sendTemplateMessage({
           to,
           template: target.template,
           lang: settings.lang,
-          params,
+          // Single body variable {{1}} = the full rendered message.
+          params: [body],
         });
         await admin.from("whatsapp_reminders_log").insert({
           owner_id: settings.owner_id,

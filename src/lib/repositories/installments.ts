@@ -1,10 +1,7 @@
 import "server-only";
 import { createClient } from "@/lib/supabase/server";
 import type { InstallmentWithRelations, InstallmentStatus } from "@/types/database";
-import type {
-  InstallmentPaymentInput,
-  InstallmentScheduleInput,
-} from "@/lib/validations";
+import type { InstallmentScheduleInput } from "@/lib/validations";
 import { effectiveInstallmentStatus } from "@/lib/calc";
 import { today } from "@/lib/format";
 import { syncLoanStatus } from "@/lib/repositories/loans";
@@ -28,24 +25,6 @@ export async function listInstallments(
   return rows.filter((r) => effectiveInstallmentStatus(r) === filter);
 }
 
-export async function registerPayment(
-  installmentId: string,
-  loanId: string,
-  input: InstallmentPaymentInput,
-): Promise<void> {
-  const supabase = await createClient();
-  const { error } = await supabase
-    .from("installments")
-    .update({
-      paid_amount: input.paid_amount,
-      paid_at: input.paid_at,
-      status: "paid",
-    })
-    .eq("id", installmentId);
-  if (error) throw error;
-  await syncLoanStatus(loanId);
-}
-
 /**
  * Updates the due date and amount of a loan's installments. Does not touch
  * payment status — `refreshOverdueStatuses` re-derives overdue from the new
@@ -65,20 +44,6 @@ export async function updateInstallmentSchedule(
     if (error) throw error;
   }
   await refreshOverdueStatuses();
-  await syncLoanStatus(loanId);
-}
-
-/** Reverts a payment, returning the installment to pending/overdue. */
-export async function clearPayment(
-  installmentId: string,
-  loanId: string,
-): Promise<void> {
-  const supabase = await createClient();
-  const { error } = await supabase
-    .from("installments")
-    .update({ paid_amount: null, paid_at: null, status: "pending" })
-    .eq("id", installmentId);
-  if (error) throw error;
   await syncLoanStatus(loanId);
 }
 

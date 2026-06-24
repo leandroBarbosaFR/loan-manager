@@ -12,7 +12,7 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "Loan Manager",
+  title: "payme.",
   description: "Internal loan tracking",
 };
 
@@ -24,7 +24,7 @@ export default async function RootLayout({
 
   return (
     <html lang={locale} className={inter.variable}>
-      <body className="min-h-screen bg-white font-sans text-black antialiased">
+      <body className="min-h-screen bg-canvas font-sans text-foreground antialiased">
         <I18nProvider locale={locale} messages={messages}>
           {children}
         </I18nProvider>

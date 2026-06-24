@@ -96,7 +96,7 @@ export default async function CustomerDetailPage({
       />
 
       <div className="mb-6 grid grid-cols-1 gap-4 sm:grid-cols-2">
-        <div className="border border-border p-4 text-sm">
+        <div className="rounded-lg border border-border bg-white p-4 text-sm shadow-sm">
           <p className="mb-2 text-xs uppercase tracking-wide text-muted-foreground">
             {t("customerDetail.profile")}
           </p>
@@ -139,7 +139,7 @@ export default async function CustomerDetailPage({
           </dl>
         </div>
 
-        <div className="border border-border p-4 text-sm">
+        <div className="rounded-lg border border-border bg-white p-4 text-sm shadow-sm">
           <p className="mb-2 text-xs uppercase tracking-wide text-muted-foreground">
             {t("customerDetail.documents")}
           </p>
@@ -174,7 +174,7 @@ export default async function CustomerDetailPage({
       </div>
 
       {customer.notes ? (
-        <div className="mb-6 border border-border p-4 text-sm">
+        <div className="mb-6 rounded-lg border border-border bg-white p-4 text-sm shadow-sm">
           <p className="mb-1 text-xs uppercase tracking-wide text-muted-foreground">
             {t("loanDetail.notes")}
           </p>

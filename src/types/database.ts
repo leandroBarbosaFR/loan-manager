@@ -28,6 +28,7 @@ export type WhatsappSettings = {
   owner_id: string;
   enabled: boolean;
   send_hour: number;
+  send_minute: number;
   timezone: string;
   lang: string;
   template_2d: string | null;
@@ -67,6 +68,104 @@ export type CustomerDocument = {
   created_at: string;
 };
 
+export type VehicleType = "car" | "motorcycle";
+export type VehicleStatus = "available" | "rented" | "maintenance" | "inactive";
+
+export type Vehicle = {
+  id: string;
+  owner_id: string;
+  type: VehicleType;
+  name: string;
+  brand: string | null;
+  model_year: number | null;
+  color: string | null;
+  plate: string | null;
+  chassis: string | null;
+  doors: number | null;
+  has_gps: boolean;
+  can_remote_block: boolean;
+  had_accident: boolean;
+  has_insurance: boolean;
+  insurance_company: string | null;
+  insurance_expiry: string | null;
+  ipva_paid: boolean;
+  ipva_due_date: string | null;
+  status: VehicleStatus;
+  notes: string | null;
+  created_at: string;
+};
+
+export type VehicleMaintenance = {
+  id: string;
+  owner_id: string;
+  vehicle_id: string;
+  service_date: string;
+  description: string;
+  cost: number;
+  odometer: number | null;
+  created_at: string;
+};
+
+export type PeriodType = "daily" | "weekly" | "monthly";
+export type RentalStatus = "active" | "closed";
+
+export type Rental = {
+  id: string;
+  owner_id: string;
+  vehicle_id: string;
+  customer_id: string;
+  period_type: PeriodType;
+  period_count: number;
+  rate: number;
+  total: number;
+  deposit: number;
+  start_date: string;
+  status: RentalStatus;
+  notes: string | null;
+  created_at: string;
+};
+
+export type RentalInstallment = {
+  id: string;
+  owner_id: string;
+  rental_id: string;
+  period_index: number;
+  due_date: string;
+  amount: number;
+  paid_amount: number | null;
+  paid_at: string | null;
+  status: InstallmentStatus;
+  created_at: string;
+};
+
+export type RentalPayment = {
+  id: string;
+  owner_id: string;
+  rental_id: string;
+  rental_installment_id: string;
+  amount: number;
+  paid_at: string;
+  note: string | null;
+  created_at: string;
+};
+
+export type RentalWithRelations = Rental & {
+  vehicle: Vehicle | null;
+  customer: Customer | null;
+  installments: RentalInstallment[];
+};
+
+export type Payment = {
+  id: string;
+  owner_id: string;
+  loan_id: string;
+  installment_id: string;
+  amount: number;
+  paid_at: string;
+  note: string | null;
+  created_at: string;
+};
+
 export type Loan = {
   id: string;
   owner_id: string;
@@ -78,6 +177,15 @@ export type Loan = {
   notes: string | null;
   /** Recurring per-period fee for interest-only loans; null for normal loans. */
   rollover_fee: number | null;
+  /** One-time late fine as a % of the overdue balance (0 = none). */
+  late_fee_percent: number;
+  /** Monthly arrears interest as a % (0 = none). */
+  late_interest_percent_month: number;
+  /** Set when this loan was created by renegotiating an older one. */
+  renegotiated_from_id: string | null;
+  /** Set on the old loan when it was renegotiated into a newer one. */
+  renegotiated_to_id: string | null;
+  renegotiated_at: string | null;
   created_at: string;
 };
 
@@ -129,13 +237,88 @@ export type Database = {
       };
       loans: {
         Row: Loan;
-        Insert: Omit<Loan, "id" | "created_at" | "status" | "rollover_fee"> & {
+        Insert: {
           id?: string;
           created_at?: string;
+          owner_id: string;
+          customer_id: string;
+          principal: number;
+          total_receivable: number;
+          loan_date: string;
           status?: LoanStatus;
+          notes?: string | null;
           rollover_fee?: number | null;
+          late_fee_percent?: number;
+          late_interest_percent_month?: number;
+          renegotiated_from_id?: string | null;
+          renegotiated_to_id?: string | null;
+          renegotiated_at?: string | null;
         };
         Update: Partial<Omit<Loan, "id" | "created_at">>;
+        Relationships: [];
+      };
+      vehicles: {
+        Row: Vehicle;
+        Insert: { owner_id: string; name: string } & Partial<
+          Omit<Vehicle, "owner_id" | "name">
+        >;
+        Update: Partial<Omit<Vehicle, "id" | "created_at">>;
+        Relationships: [];
+      };
+      vehicle_maintenance: {
+        Row: VehicleMaintenance;
+        Insert: Omit<VehicleMaintenance, "id" | "created_at" | "odometer"> & {
+          id?: string;
+          created_at?: string;
+          odometer?: number | null;
+        };
+        Update: Partial<Omit<VehicleMaintenance, "id" | "created_at">>;
+        Relationships: [];
+      };
+      rentals: {
+        Row: Rental;
+        Insert: Omit<Rental, "id" | "created_at" | "status" | "deposit"> & {
+          id?: string;
+          created_at?: string;
+          status?: RentalStatus;
+          deposit?: number;
+        };
+        Update: Partial<Omit<Rental, "id" | "created_at">>;
+        Relationships: [];
+      };
+      rental_installments: {
+        Row: RentalInstallment;
+        Insert: Omit<
+          RentalInstallment,
+          "id" | "created_at" | "paid_amount" | "paid_at" | "status"
+        > & {
+          id?: string;
+          created_at?: string;
+          paid_amount?: number | null;
+          paid_at?: string | null;
+          status?: InstallmentStatus;
+        };
+        Update: Partial<Omit<RentalInstallment, "id" | "created_at">>;
+        Relationships: [];
+      };
+      rental_payments: {
+        Row: RentalPayment;
+        Insert: Omit<RentalPayment, "id" | "created_at" | "note"> & {
+          id?: string;
+          created_at?: string;
+          note?: string | null;
+        };
+        Update: Partial<Omit<RentalPayment, "id" | "created_at">>;
+        Relationships: [];
+      };
+      payments: {
+        Row: Payment;
+        Insert: Omit<Payment, "id" | "created_at" | "note"> & {
+          id?: string;
+          created_at?: string;
+          note?: string | null;
+        };
+        Update: Partial<Omit<Payment, "id" | "created_at">>;
         Relationships: [];
       };
       installments: {

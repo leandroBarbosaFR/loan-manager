@@ -68,13 +68,13 @@ export function CustomerSearchSelect({
         <button
           type="button"
           onClick={clear}
-          className="absolute right-2 top-1/2 -translate-y-1/2 text-xs text-muted-foreground hover:text-black"
+          className="absolute right-2 top-1/2 -translate-y-1/2 text-xs text-muted-foreground hover:text-foreground"
         >
           {clearLabel}
         </button>
       ) : null}
       {open && filtered.length > 0 ? (
-        <ul className="absolute z-10 mt-1 max-h-56 w-full overflow-y-auto border border-border bg-white text-sm shadow">
+        <ul className="absolute z-10 mt-1 max-h-56 w-full overflow-y-auto rounded-md border border-border bg-white py-1 text-sm shadow-md">
           {filtered.map((o) => (
             <li key={o.id}>
               <button

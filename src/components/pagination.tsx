@@ -24,9 +24,9 @@ export function Pagination({
   return (
     <div className="mt-4 flex items-center justify-between text-sm">
       <span className="text-muted-foreground tabular-nums">{summary}</span>
-      <div className="flex">
+      <div className="flex gap-2">
         <PageLink href={prevHref} label={previousLabel} />
-        <PageLink href={nextHref} label={nextLabel} className="border-l-0" />
+        <PageLink href={nextHref} label={nextLabel} />
       </div>
     </div>
   );
@@ -42,10 +42,10 @@ function PageLink({
   className?: string;
 }) {
   const classes = cn(
-    "border border-border px-3 py-1.5",
+    "rounded-md border border-border px-3 py-1.5 shadow-xs transition-colors",
     className,
     href
-      ? "bg-white text-black hover:bg-muted"
+      ? "bg-white text-foreground hover:bg-muted"
       : "cursor-not-allowed bg-muted text-muted-foreground",
   );
   if (!href) {

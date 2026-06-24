@@ -8,23 +8,19 @@
 
 html,
 body {
-  background-color: #ffffff;
-  color: #000000;
+  background-color: #f7f8fa;
+  color: #0a0a0b;
 }
 
 body {
   font-feature-settings: "cv11", "ss01";
   -webkit-font-smoothing: antialiased;
-}
-
-/* Square everything. No radius anywhere by default. */
-* {
-  border-radius: 0 !important;
+  text-rendering: optimizeLegibility;
 }
 
 @layer base {
   * {
-    border-color: #e5e5e5;
+    border-color: #e6e7eb;
   }
 }
 

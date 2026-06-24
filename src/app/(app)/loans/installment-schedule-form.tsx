@@ -4,6 +4,8 @@ import { useActionState, useMemo, useState } from "react";
 import { Input } from "@/components/ui/input";
 import { FormError } from "@/components/form-field";
 import { SubmitButton } from "@/components/submit-button";
+import { UnsavedChangesGuard } from "@/components/unsaved-changes-guard";
+import { useActionToast } from "@/components/toast";
 import type { ActionState } from "@/lib/action-state";
 import type { Installment } from "@/types/database";
 import { round2 } from "@/lib/calc";
@@ -23,6 +25,8 @@ export function InstallmentScheduleForm({
 }) {
   const t = useT();
   const [state, formAction] = useActionState(action, null);
+
+  useActionToast(state, t("schedule.updated"));
 
   const [rows, setRows] = useState<Row[]>(() =>
     installments.map((i) => ({
@@ -58,16 +62,12 @@ export function InstallmentScheduleForm({
 
   return (
     <form action={formAction}>
+      <UnsavedChangesGuard />
       <FormError message={state?.error} />
-      {state?.ok ? (
-        <div className="mb-4 border border-border bg-muted px-3 py-2 text-sm">
-          {t("schedule.updated")}
-        </div>
-      ) : null}
 
       <input type="hidden" name="schedule_json" value={JSON.stringify(schedule)} />
 
-      <div className="border border-border">
+      <div className="overflow-hidden rounded-lg border border-border bg-white shadow-sm">
         <table className="w-full text-sm">
           <thead>
             <tr className="border-b border-border text-left text-muted-foreground">

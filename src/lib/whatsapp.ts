@@ -17,6 +17,25 @@ export function toWhatsappNumber(
 }
 
 /**
+ * Fills the user-written message with the real values for a reminder.
+ * Supported placeholders (case-insensitive): {nome}, {data}, {valor}.
+ * WhatsApp rejects template params containing tabs/newlines or 4+ spaces, so
+ * those are normalised away.
+ */
+export function renderMessage(
+  text: string,
+  vars: { nome: string; data: string; valor: string },
+): string {
+  return text
+    .replace(/\{nome\}/gi, vars.nome)
+    .replace(/\{data\}/gi, vars.data)
+    .replace(/\{valor\}/gi, vars.valor)
+    .replace(/[\t\r\n]+/g, " ")
+    .replace(/\s{4,}/g, "   ")
+    .trim();
+}
+
+/**
  * Sends an approved WhatsApp template message via the Meta Cloud API.
  * `params` fill the template body placeholders {{1}}, {{2}}, … in order.
  */
@@ -27,10 +46,12 @@ export async function sendTemplateMessage(opts: {
   params: string[];
 }): Promise<void> {
   const phoneNumberId = process.env.WHATSAPP_PHONE_NUMBER_ID;
-  const token = process.env.WHATSAPP_TOKEN;
+  // Accept either name; WHATSAPP_ACCESS_TOKEN is the conventional Meta one.
+  const token =
+    process.env.WHATSAPP_ACCESS_TOKEN ?? process.env.WHATSAPP_TOKEN;
   if (!phoneNumberId || !token) {
     throw new Error(
-      "WHATSAPP_PHONE_NUMBER_ID / WHATSAPP_TOKEN are not set in the environment.",
+      "WHATSAPP_PHONE_NUMBER_ID / WHATSAPP_ACCESS_TOKEN are not set in the environment.",
     );
   }
 

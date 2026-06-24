@@ -1,8 +1,8 @@
 "use client";
 
-import Image from "next/image";
 import { useActionState, useState } from "react";
 import { login } from "./actions";
+import { Brand } from "@/components/brand";
 import { Input } from "@/components/ui/input";
 import { FormField, FormError } from "@/components/form-field";
 import { SubmitButton } from "@/components/submit-button";
@@ -27,16 +27,9 @@ export default function LoginPage() {
     codes?.map((c) => tr(c) ?? c);
 
   return (
-    <main className="flex min-h-screen items-center justify-center px-4">
-      <div className="w-full max-w-sm border border-border p-6">
-        <Image
-          src="/bank-of-ms-logo.svg"
-          alt="Bank of MS"
-          width={70}
-          height={46}
-          priority
-          className="mb-4 h-20 w-auto"
-        />
+    <main className="flex min-h-screen items-center justify-center bg-canvas px-4">
+      <div className="w-full max-w-sm rounded-xl border border-border bg-white p-6 shadow-md">
+        <Brand className="mb-4 text-3xl" />
         <p className="mb-6 mt-1 text-sm text-muted-foreground">
           {t("login.subtitle")}
         </p>
@@ -79,7 +72,7 @@ export default function LoginPage() {
                   showPassword ? t("login.hidePassword") : t("login.showPassword")
                 }
                 aria-pressed={showPassword}
-                className="absolute inset-y-0 right-0 flex items-center px-3 text-muted-foreground hover:text-black focus-visible:outline-none focus-visible:text-black"
+                className="absolute inset-y-0 right-0 flex items-center px-3 text-muted-foreground hover:text-foreground focus-visible:text-foreground focus-visible:outline-none"
               >
                 {showPassword ? <EyeOffIcon /> : <EyeIcon />}
               </button>

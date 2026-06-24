@@ -1,5 +1,5 @@
-import type { Installment, Loan } from "@/types/database";
-import { addMonths, today } from "@/lib/format";
+import type { Installment, InstallmentStatus, Loan } from "@/types/database";
+import { addMonths, daysBetween, today } from "@/lib/format";
 
 /** Rounds to 2 decimal places, avoiding binary float drift. */
 export function round2(n: number): number {
@@ -111,12 +111,116 @@ export function deriveLoanStatus(
   return anyOverdue ? "overdue" : "open";
 }
 
+export interface InstallmentPaidState {
+  paid_amount: number | null;
+  paid_at: string | null;
+  status: InstallmentStatus;
+}
+
+/**
+ * Derives an installment's cached payment state from its ledger payments.
+ * Partial payments accumulate in `paid_amount` but keep the installment unpaid
+ * (`paid_at` stays null, status "pending") until the full amount is covered.
+ * Overdue is derived from the due date elsewhere — never stored here.
+ */
+export function aggregatePayments(
+  installmentAmount: number,
+  payments: { amount: number; paid_at: string }[],
+): InstallmentPaidState {
+  if (payments.length === 0) {
+    return { paid_amount: null, paid_at: null, status: "pending" };
+  }
+  const paid = round2(payments.reduce((sum, p) => sum + p.amount, 0));
+  if (paid >= round2(installmentAmount)) {
+    // All paid_at are non-empty ISO dates, so "" is always the smallest seed.
+    const paid_at = payments.reduce(
+      (latest, p) => (p.paid_at > latest ? p.paid_at : latest),
+      "",
+    );
+    return { paid_amount: paid, paid_at, status: "paid" };
+  }
+  return { paid_amount: paid, paid_at: null, status: "pending" };
+}
+
 export interface LoanTotals {
   principal: number;
   receivable: number;
   profit: number;
   paid: number;
   outstanding: number;
+}
+
+export interface LateChargeConfig {
+  /** One-time fine (multa) as a % of the overdue balance. */
+  feePercent: number;
+  /** Monthly arrears interest (juros de mora), accrued pro-rata per day. */
+  interestPercentMonth: number;
+}
+
+export interface LateCharge {
+  daysLate: number;
+  outstanding: number;
+  fee: number;
+  interest: number;
+  total: number;
+}
+
+const NO_LATE_CHARGE: LateCharge = {
+  daysLate: 0,
+  outstanding: 0,
+  fee: 0,
+  interest: 0,
+  total: 0,
+};
+
+/**
+ * Late penalty for a single installment as of `asOf` (YYYY-MM-DD).
+ * Fine is one-time on the overdue balance; interest is simple, pro-rata per
+ * day (monthly rate × daysLate/30). Zero when paid or not yet overdue.
+ */
+export function lateCharge(
+  inst: Pick<Installment, "amount" | "due_date" | "paid_amount" | "paid_at">,
+  asOf: string,
+  config: LateChargeConfig,
+): LateCharge {
+  if (inst.paid_at) return NO_LATE_CHARGE;
+  const outstanding = round2(inst.amount - (inst.paid_amount ?? 0));
+  if (outstanding <= 0) return NO_LATE_CHARGE;
+  const daysLate = daysBetween(inst.due_date, asOf);
+  if (daysLate <= 0) return NO_LATE_CHARGE;
+
+  const fee = round2(outstanding * (config.feePercent / 100));
+  const interest = round2(
+    outstanding * (config.interestPercentMonth / 100) * (daysLate / 30),
+  );
+  return { daysLate, outstanding, fee, interest, total: round2(fee + interest) };
+}
+
+/** Sum of late charges across a loan's installments as of `asOf`. */
+export function totalLateCharges(
+  installments: Pick<
+    Installment,
+    "amount" | "due_date" | "paid_amount" | "paid_at"
+  >[],
+  asOf: string,
+  config: LateChargeConfig,
+): number {
+  return round2(
+    installments.reduce((sum, i) => sum + lateCharge(i, asOf, config).total, 0),
+  );
+}
+
+/**
+ * Principal carried into a renegotiated loan: outstanding balance, optionally
+ * plus accrued late charges, minus an optional discount (never below zero).
+ */
+export function renegotiationPrincipal(
+  outstanding: number,
+  lateCharges: number,
+  opts: { includeLateCharges: boolean; discount: number },
+): number {
+  const base = outstanding + (opts.includeLateCharges ? lateCharges : 0);
+  return round2(Math.max(0, base - opts.discount));
 }
 
 export function loanTotals(

@@ -16,9 +16,14 @@ export async function saveWhatsappSettingsAction(
 ): Promise<ActionState> {
   await requireUser();
 
+  // The form sends a single "HH:MM" time; split it into hour + minute.
+  const [sendHour, sendMinute] = String(formData.get("send_time") ?? "")
+    .split(":");
+
   const parsed = whatsappSettingsSchema.safeParse({
     enabled: formData.get("enabled") === "on",
-    send_hour: formData.get("send_hour"),
+    send_hour: sendHour,
+    send_minute: sendMinute,
     timezone: formData.get("timezone"),
     lang: formData.get("lang"),
     template_2d: formData.get("template_2d"),

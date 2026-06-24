@@ -13,8 +13,8 @@ export function FilterTabs({
   options: { value: string; label: string; count?: number }[];
 }) {
   return (
-    <div className="mb-4 flex flex-wrap border border-border">
-      {options.map((opt, i) => {
+    <div className="mb-4 inline-flex flex-wrap gap-1 rounded-lg border border-border bg-white p-1 shadow-xs">
+      {options.map((opt) => {
         const href =
           opt.value === "all" ? basePath : `${basePath}?${param}=${opt.value}`;
         const isActive = active === opt.value;
@@ -23,11 +23,10 @@ export function FilterTabs({
             key={opt.value}
             href={href}
             className={cn(
-              "border-border px-4 py-2 text-sm",
-              i > 0 && "border-l",
+              "rounded-md px-3 py-1.5 text-sm font-medium transition-colors",
               isActive
-                ? "bg-black text-white"
-                : "bg-white text-black hover:bg-muted",
+                ? "bg-primary text-primary-foreground"
+                : "text-muted-foreground hover:bg-muted hover:text-foreground",
             )}
           >
             {opt.label}
@@ -35,7 +34,7 @@ export function FilterTabs({
               <span
                 className={cn(
                   "ml-2 tabular-nums",
-                  isActive ? "text-white/70" : "text-muted-foreground",
+                  isActive ? "text-primary-foreground/70" : "text-muted-foreground",
                 )}
               >
                 {opt.count}

@@ -2,7 +2,7 @@ import { cn } from "@/lib/utils";
 
 export function StatGrid({ children }: { children: React.ReactNode }) {
   return (
-    <div className="grid grid-cols-1 border-l border-t border-border sm:grid-cols-2 lg:grid-cols-4">
+    <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
       {children}
     </div>
   );
@@ -18,13 +18,13 @@ export function Stat({
   emphasis?: "default" | "success" | "destructive" | "warning";
 }) {
   return (
-    <div className="border-b border-r border-border p-4">
-      <p className="text-xs uppercase tracking-wide text-muted-foreground">
+    <div className="rounded-lg border border-border bg-white p-5 shadow-sm transition-shadow hover:shadow-md">
+      <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
         {label}
       </p>
       <p
         className={cn(
-          "mt-2 text-2xl font-medium tabular-nums",
+          "mt-2 text-2xl font-semibold tabular-nums text-foreground",
           emphasis === "success" && "text-success",
           emphasis === "destructive" && "text-destructive",
           emphasis === "warning" && "text-warning",

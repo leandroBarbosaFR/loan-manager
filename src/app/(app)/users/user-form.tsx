@@ -5,6 +5,8 @@ import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
 import { FormField, FormError } from "@/components/form-field";
 import { SubmitButton } from "@/components/submit-button";
+import { UnsavedChangesGuard } from "@/components/unsaved-changes-guard";
+import { useActionToast } from "@/components/toast";
 import type { ActionState } from "@/lib/action-state";
 import { useT } from "@/lib/i18n/context";
 import { createUserAction } from "./actions";
@@ -14,18 +16,16 @@ export function UserForm() {
   const [state, formAction] = useActionState(createUserAction, null);
   const formRef = useRef<HTMLFormElement>(null);
 
+  useActionToast(state, t("users.created"));
+
   useEffect(() => {
     if (state?.ok) formRef.current?.reset();
   }, [state]);
 
   return (
     <form ref={formRef} action={formAction} className="max-w-lg">
+      <UnsavedChangesGuard />
       <FormError message={state?.error} />
-      {state?.ok ? (
-        <div className="mb-4 border border-border bg-muted px-3 py-2 text-sm">
-          {t("users.created")}
-        </div>
-      ) : null}
 
       <FormField label={t("users.email")} htmlFor="email" errors={state?.fieldErrors?.email}>
         <Input id="email" name="email" type="email" autoComplete="off" required />

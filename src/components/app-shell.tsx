@@ -1,8 +1,8 @@
 "use client";
 
-import Image from "next/image";
 import { useState } from "react";
 import { Nav } from "@/components/nav";
+import { Brand } from "@/components/brand";
 import { Button } from "@/components/ui/button";
 import { LanguageSwitcher } from "@/components/language-switcher";
 import { logout } from "@/app/(app)/actions";
@@ -25,16 +25,7 @@ export function AppShell({
     <div className="relative flex min-h-screen flex-col md:flex-row">
       {/* Mobile top bar */}
       <header className="sticky top-0 z-40 flex items-center justify-between border-b border-border bg-background px-4 py-3 md:hidden">
-        <div className="flex items-center gap-2">
-          <Image
-            src="/bank-of-ms-logo.svg"
-            alt="Bank of MS"
-            width={70}
-            height={46}
-            priority
-            className="h-10 w-auto"
-          />
-        </div>
+        <Brand className="text-xl" />
         <Button
           variant="outline"
           size="sm"
@@ -66,14 +57,7 @@ export function AppShell({
       >
         {/* Mobile drawer header */}
         <div className="flex items-center justify-between border-b border-border px-4 py-3 md:hidden">
-          <Image
-            src="/bank-of-ms-logo.svg"
-            alt="Bank of MS"
-            width={70}
-            height={46}
-            priority
-            className="h-10 w-auto"
-          />
+          <Brand className="text-xl" />
           <Button
             variant="outline"
             size="sm"
@@ -83,15 +67,8 @@ export function AppShell({
           </Button>
         </div>
         {/* Desktop logo */}
-        <div className="hidden items-center gap-2 px-4 py-4 md:flex">
-          <Image
-            src="/bank-of-ms-logo.svg"
-            alt="Bank of MS"
-            width={70}
-            height={46}
-            priority
-            className="h-14 w-auto"
-          />
+        <div className="hidden px-4 py-5 md:block">
+          <Brand className="text-2xl" />
         </div>
         <Nav onNavigate={() => setOpen(false)} isSuperAdmin={isSuperAdmin} />
         <div className="mt-auto border-t border-border p-4">
