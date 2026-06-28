@@ -26,5 +26,5 @@ export async function changePasswordAction(
   });
   if (error) return { ok: false, error: "update_failed" };
 
-  redirect("/");
+  redirect("/dashboard");
 }

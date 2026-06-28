@@ -21,7 +21,7 @@ import {
 type NavLink = { href: string; key: MessageKey; Icon: (p: IconProps) => React.ReactElement };
 
 const LINKS: NavLink[] = [
-  { href: "/", key: "nav.dashboard", Icon: DashboardIcon },
+  { href: "/dashboard", key: "nav.dashboard", Icon: DashboardIcon },
   { href: "/customers", key: "nav.customers", Icon: CustomersIcon },
   { href: "/loans", key: "nav.loans", Icon: LoansIcon },
   { href: "/vehicles", key: "nav.vehicles", Icon: VehiclesIcon },

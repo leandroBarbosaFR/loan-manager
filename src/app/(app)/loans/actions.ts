@@ -55,7 +55,7 @@ export async function createLoanAction(
 
   const loan = await createLoan(parsed.data);
   revalidatePath("/loans");
-  revalidatePath("/");
+  revalidatePath("/dashboard");
   redirect(`/loans/${loan.id}?flash=loan_created`);
 }
 
@@ -102,7 +102,7 @@ export async function updateScheduleAction(
   revalidatePath("/loans");
   revalidatePath(`/loans/${loanId}`);
   revalidatePath("/installments");
-  revalidatePath("/");
+  revalidatePath("/dashboard");
   return { ok: true };
 }
 
@@ -111,7 +111,7 @@ export async function rollOverLoanAction(id: string): Promise<void> {
   revalidatePath("/loans");
   revalidatePath(`/loans/${id}`);
   revalidatePath("/installments");
-  revalidatePath("/");
+  revalidatePath("/dashboard");
 }
 
 export async function settleLoanAction(
@@ -124,7 +124,7 @@ export async function settleLoanAction(
   revalidatePath("/loans");
   revalidatePath(`/loans/${id}`);
   revalidatePath("/installments");
-  revalidatePath("/");
+  revalidatePath("/dashboard");
   revalidatePath("/reports");
   redirect(`/loans/${id}?flash=loan_settled`);
 }
@@ -157,7 +157,7 @@ export async function renegotiateLoanAction(
   revalidatePath("/loans");
   revalidatePath(`/loans/${oldId}`);
   revalidatePath("/installments");
-  revalidatePath("/");
+  revalidatePath("/dashboard");
   revalidatePath("/reports");
   redirect(`/loans/${newLoanId}?flash=loan_renegotiated`);
 }
@@ -165,6 +165,6 @@ export async function renegotiateLoanAction(
 export async function deleteLoanAction(id: string): Promise<void> {
   await deleteLoan(id);
   revalidatePath("/loans");
-  revalidatePath("/");
+  revalidatePath("/dashboard");
   redirect("/loans?flash=loan_deleted");
 }

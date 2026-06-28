@@ -12,7 +12,7 @@ function revalidateAll(loanId: string) {
   revalidatePath("/installments");
   revalidatePath("/loans");
   revalidatePath(`/loans/${loanId}`);
-  revalidatePath("/");
+  revalidatePath("/dashboard");
   revalidatePath("/reports");
 }
 

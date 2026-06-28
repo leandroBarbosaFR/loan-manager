@@ -2,7 +2,7 @@ import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 import type { Database } from "@/types/database";
 
-const PUBLIC_PATHS = ["/login", "/auth", "/forgot-password"];
+const PUBLIC_PATHS = ["/", "/login", "/auth", "/forgot-password"];
 
 /**
  * Refreshes the Supabase session cookie and guards protected routes.
@@ -63,10 +63,10 @@ export async function updateSession(request: NextRequest) {
     return NextResponse.redirect(url);
   }
 
-  // Already signed in but sitting on /login → send to dashboard.
-  if (user && pathname === "/login") {
+  // Signed in but on the landing page or /login → send to the dashboard.
+  if (user && (pathname === "/login" || pathname === "/")) {
     const url = request.nextUrl.clone();
-    url.pathname = "/";
+    url.pathname = "/dashboard";
     url.search = "";
     return NextResponse.redirect(url);
   }

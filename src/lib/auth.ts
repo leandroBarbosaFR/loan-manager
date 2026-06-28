@@ -43,6 +43,6 @@ export async function isSuperAdmin(): Promise<boolean> {
 /** Guards super-admin-only routes/actions; redirects non-admins to the home page. */
 export async function requireSuperAdmin(): Promise<Profile> {
   const profile = await getProfile();
-  if (!profile || profile.role !== "super_admin") redirect("/");
+  if (!profile || profile.role !== "super_admin") redirect("/dashboard");
   return profile;
 }

@@ -35,5 +35,5 @@ export async function login(
     return { ok: false, error: "invalid_credentials" };
   }
 
-  redirect("/");
+  redirect("/dashboard");
 }
