@@ -5,6 +5,7 @@ import { StatusBadge } from "@/components/status-badge";
 import { EmptyState } from "@/components/empty-state";
 import { SearchInput } from "@/components/search-input";
 import { Pagination } from "@/components/pagination";
+import { FeatureTour } from "@/components/feature-tour";
 import {
   Table,
   TableHeader,
@@ -75,9 +76,12 @@ export default async function LoansPage({
         title={t("loans.title")}
         description={t("loans.description")}
         action={
-          <Link href="/loans/new">
-            <Button>{t("loans.new")}</Button>
-          </Link>
+          <div className="flex items-center gap-2">
+            <FeatureTour id="loans" />
+            <Link href="/loans/new" data-tour="new-loan">
+              <Button>{t("loans.new")}</Button>
+            </Link>
+          </div>
         }
       />
 

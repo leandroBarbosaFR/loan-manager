@@ -3,6 +3,7 @@ import { PageHeader } from "@/components/page-header";
 import { Button } from "@/components/ui/button";
 import { SearchInput } from "@/components/search-input";
 import { EmptyState } from "@/components/empty-state";
+import { FeatureTour } from "@/components/feature-tour";
 import {
   Table,
   TableHeader,
@@ -30,13 +31,16 @@ export default async function CustomersPage({
         title={t("customers.title")}
         description={t("customers.description")}
         action={
-          <Link href="/customers/new">
-            <Button>{t("customers.new")}</Button>
-          </Link>
+          <div className="flex items-center gap-2">
+            <FeatureTour id="customers" />
+            <Link href="/customers/new" data-tour="new-customer">
+              <Button>{t("customers.new")}</Button>
+            </Link>
+          </div>
         }
       />
 
-      <div className="mb-4">
+      <div className="mb-4" data-tour="search">
         <SearchInput placeholder={t("customers.searchPlaceholder")} />
       </div>
 

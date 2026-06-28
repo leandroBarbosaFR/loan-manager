@@ -12,7 +12,7 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "payme.",
+  title: "lendly.",
   description: "Internal loan tracking",
 };
 

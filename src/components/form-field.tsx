@@ -9,6 +9,7 @@ export function FormField({
   hint,
   children,
   className,
+  ...rest
 }: {
   label: string;
   htmlFor: string;
@@ -16,9 +17,9 @@ export function FormField({
   hint?: string;
   children: React.ReactNode;
   className?: string;
-}) {
+} & React.HTMLAttributes<HTMLDivElement>) {
   return (
-    <div className={cn("mb-4", className)}>
+    <div className={cn("mb-4", className)} {...rest}>
       <Label htmlFor={htmlFor}>{label}</Label>
       {children}
       {hint ? (

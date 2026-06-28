@@ -87,13 +87,37 @@ export type WhatsappSettingsInput = z.infer<typeof whatsappSettingsSchema>;
 // ---------------------------------------------------------------------------
 // Users (super-admin account management)
 // ---------------------------------------------------------------------------
+export const setPasswordSchema = z
+  .object({
+    password: z.string().min(8, "weak_password"),
+    confirm: z.string(),
+  })
+  .refine((d) => d.password === d.confirm, {
+    message: "password_mismatch",
+    path: ["confirm"],
+  });
+
+/** Profile fields shared by the create-user and edit-profile forms. */
+const profileFields = {
+  full_name: z.string().trim().min(1, "Name is required").max(200),
+  phone: optionalShort(40),
+  street: optionalShort(200),
+  city: z.string().trim().min(1, "City is required").max(120),
+  country: z.string().trim().min(1, "Country is required").max(120),
+};
+
 export const newUserSchema = z.object({
   email: z.string().trim().email("Enter a valid email"),
-  password: z.string().min(8, "Password must be at least 8 characters"),
   role: z.enum(["super_admin", "user"]).default("user"),
+  ...profileFields,
 });
 
 export type NewUserInput = z.infer<typeof newUserSchema>;
+
+/** A user editing their own profile (no email/password/role here). */
+export const profileSchema = z.object(profileFields);
+
+export type ProfileInput = z.infer<typeof profileSchema>;
 
 // ---------------------------------------------------------------------------
 // Customers

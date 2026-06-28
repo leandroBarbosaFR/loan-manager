@@ -2,7 +2,7 @@ import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 import type { Database } from "@/types/database";
 
-const PUBLIC_PATHS = ["/login", "/auth"];
+const PUBLIC_PATHS = ["/login", "/auth", "/forgot-password"];
 
 /**
  * Refreshes the Supabase session cookie and guards protected routes.
@@ -46,6 +46,20 @@ export async function updateSession(request: NextRequest) {
     const url = request.nextUrl.clone();
     url.pathname = "/login";
     url.searchParams.set("redirectedFrom", pathname);
+    return NextResponse.redirect(url);
+  }
+
+  // Force first-login password change before letting the user into the app.
+  const mustChange = user?.user_metadata?.must_change_password === true;
+  if (
+    user &&
+    mustChange &&
+    pathname !== "/change-password" &&
+    !pathname.startsWith("/auth")
+  ) {
+    const url = request.nextUrl.clone();
+    url.pathname = "/change-password";
+    url.search = "";
     return NextResponse.redirect(url);
   }
 

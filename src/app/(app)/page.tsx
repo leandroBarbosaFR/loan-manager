@@ -2,6 +2,7 @@ import Link from "next/link";
 import { PageHeader } from "@/components/page-header";
 import { Stat, StatGrid } from "@/components/stat";
 import { Button } from "@/components/ui/button";
+import { FeatureTour } from "@/components/feature-tour";
 import { getDashboardStats } from "@/lib/repositories/stats";
 import { refreshOverdueStatuses } from "@/lib/repositories/installments";
 import { formatMoney } from "@/lib/format";
@@ -19,9 +20,12 @@ export default async function DashboardPage() {
         title={t("dashboard.title")}
         description={t("dashboard.description")}
         action={
-          <Link href="/loans/new">
-            <Button>{t("loans.new")}</Button>
-          </Link>
+          <div className="flex items-center gap-2">
+            <FeatureTour id="welcome" />
+            <Link href="/loans/new" data-tour="new-loan">
+              <Button>{t("loans.new")}</Button>
+            </Link>
+          </div>
         }
       />
 

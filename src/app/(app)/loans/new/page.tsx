@@ -3,6 +3,7 @@ import { PageHeader } from "@/components/page-header";
 import { Button } from "@/components/ui/button";
 import { EmptyState } from "@/components/empty-state";
 import { LoanForm } from "../loan-form";
+import { FeatureTour } from "@/components/feature-tour";
 import { createLoanAction } from "../actions";
 import { listCustomers } from "@/lib/repositories/customers";
 import { getT } from "@/lib/i18n/server";
@@ -19,7 +20,10 @@ export default async function NewLoanPage({
 
   return (
     <div>
-      <PageHeader title={t("loans.new")} />
+      <PageHeader
+        title={t("loans.new")}
+        action={customers.length > 0 ? <FeatureTour id="loanForm" /> : undefined}
+      />
       {customers.length === 0 ? (
         <EmptyState
           title={t("loans.needCustomerTitle")}

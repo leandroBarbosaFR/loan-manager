@@ -19,6 +19,11 @@ export type Profile = {
   id: string;
   email: string | null;
   role: UserRole;
+  full_name: string | null;
+  phone: string | null;
+  street: string | null;
+  city: string | null;
+  country: string | null;
   created_at: string;
 };
 
@@ -339,7 +344,7 @@ export type Database = {
       };
       profiles: {
         Row: Profile;
-        Insert: Omit<Profile, "created_at"> & { created_at?: string };
+        Insert: { id: string } & Partial<Omit<Profile, "id">>;
         Update: Partial<Omit<Profile, "id" | "created_at">>;
         Relationships: [];
       };

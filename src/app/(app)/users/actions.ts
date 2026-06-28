@@ -1,6 +1,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import { headers } from "next/headers";
 import { newUserSchema } from "@/lib/validations";
 import { zodToFieldErrors, type ActionState } from "@/lib/action-state";
 import { requireSuperAdmin } from "@/lib/auth";
@@ -14,13 +15,22 @@ export async function createUserAction(
 
   const parsed = newUserSchema.safeParse({
     email: formData.get("email"),
-    password: formData.get("password"),
     role: formData.get("role"),
+    full_name: formData.get("full_name"),
+    phone: formData.get("phone"),
+    street: formData.get("street"),
+    city: formData.get("city"),
+    country: formData.get("country"),
   });
   if (!parsed.success) return zodToFieldErrors(parsed.error);
 
+  const h = await headers();
+  const host = h.get("x-forwarded-host") ?? h.get("host");
+  const proto = h.get("x-forwarded-proto") ?? "https";
+  const origin = process.env.NEXT_PUBLIC_SITE_URL ?? `${proto}://${host}`;
+
   try {
-    await createUser(parsed.data);
+    await createUser(parsed.data, `${origin}/auth/callback?next=/reset-password`);
   } catch (e) {
     return {
       ok: false,

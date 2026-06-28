@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { FilterTabs } from "@/components/filter-tabs";
 import { EmptyState } from "@/components/empty-state";
+import { FeatureTour } from "@/components/feature-tour";
 import {
   Table,
   TableHeader,
@@ -41,9 +42,12 @@ export default async function VehiclesPage({
         title={t("vehicles.title")}
         description={t("vehicles.description")}
         action={
-          <Link href="/vehicles/new">
-            <Button>{t("vehicles.new")}</Button>
-          </Link>
+          <div className="flex items-center gap-2">
+            <FeatureTour id="vehicles" />
+            <Link href="/vehicles/new" data-tour="new-vehicle">
+              <Button>{t("vehicles.new")}</Button>
+            </Link>
+          </div>
         }
       />
 

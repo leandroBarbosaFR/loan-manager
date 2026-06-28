@@ -212,6 +212,7 @@ export function LoanForm({
       <FormField
         label={t("loanForm.totalReceivable")}
         htmlFor="total_receivable_input"
+        data-tour="lf-total"
         errors={state?.fieldErrors?.total_receivable}
         hint={
           useFee
@@ -337,7 +338,10 @@ export function LoanForm({
       ) : null}
 
       {allowInstallments && !rollover ? (
-        <div className="mb-4 rounded-lg border border-border bg-white p-4 shadow-sm">
+        <div
+          data-tour="lf-installments"
+          className="mb-4 rounded-lg border border-border bg-white p-4 shadow-sm"
+        >
           <label className="flex items-center gap-2 text-sm font-medium">
             <input
               type="checkbox"

@@ -68,7 +68,10 @@ export function VehicleForm({
         </FormField>
       </div>
 
-      <fieldset className="mb-4 rounded-lg border border-border bg-white p-4 shadow-sm">
+      <fieldset
+        data-tour="vf-specs"
+        className="mb-4 rounded-lg border border-border bg-white p-4 shadow-sm"
+      >
         <legend className="px-1 text-xs font-medium uppercase tracking-wide text-muted-foreground">
           {t("vehicleForm.specs")}
         </legend>
@@ -106,7 +109,10 @@ export function VehicleForm({
         </div>
       </fieldset>
 
-      <fieldset className="mb-4 rounded-lg border border-border bg-white p-4 shadow-sm">
+      <fieldset
+        data-tour="vf-features"
+        className="mb-4 rounded-lg border border-border bg-white p-4 shadow-sm"
+      >
         <legend className="px-1 text-xs font-medium uppercase tracking-wide text-muted-foreground">
           {t("vehicleForm.features")}
         </legend>
@@ -125,7 +131,10 @@ export function VehicleForm({
         </div>
       </fieldset>
 
-      <fieldset className="mb-4 rounded-lg border border-border bg-white p-4 shadow-sm">
+      <fieldset
+        data-tour="vf-docs"
+        className="mb-4 rounded-lg border border-border bg-white p-4 shadow-sm"
+      >
         <legend className="px-1 text-xs font-medium uppercase tracking-wide text-muted-foreground">
           {t("vehicleForm.documentation")}
         </legend>

@@ -1,8 +1,10 @@
 "use client";
 
+import Link from "next/link";
 import { useState } from "react";
 import { Nav } from "@/components/nav";
 import { Brand } from "@/components/brand";
+import { SettingsIcon } from "@/components/nav-icons";
 import { Button } from "@/components/ui/button";
 import { LanguageSwitcher } from "@/components/language-switcher";
 import { logout } from "@/app/(app)/actions";
@@ -22,7 +24,7 @@ export function AppShell({
   const t = useT();
 
   return (
-    <div className="relative flex min-h-screen flex-col md:flex-row">
+    <div className="relative flex min-h-screen flex-col md:h-screen md:flex-row md:overflow-hidden">
       {/* Mobile top bar */}
       <header className="sticky top-0 z-40 flex items-center justify-between border-b border-border bg-background px-4 py-3 md:hidden">
         <Brand className="text-xl" />
@@ -72,6 +74,32 @@ export function AppShell({
         </div>
         <Nav onNavigate={() => setOpen(false)} isSuperAdmin={isSuperAdmin} />
         <div className="mt-auto border-t border-border p-4">
+          <nav className="mb-3 flex flex-col gap-0.5">
+            <Link
+              href="/settings"
+              onClick={() => setOpen(false)}
+              className="flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+            >
+              <SettingsIcon className="h-4 w-4 shrink-0" />
+              {t("nav.settings")}
+            </Link>
+            <div className="flex gap-3 px-3 pt-1 text-xs text-muted-foreground">
+              <Link
+                href="/legal/privacy"
+                onClick={() => setOpen(false)}
+                className="underline-offset-2 hover:text-foreground hover:underline"
+              >
+                {t("nav.privacy")}
+              </Link>
+              <Link
+                href="/legal/terms"
+                onClick={() => setOpen(false)}
+                className="underline-offset-2 hover:text-foreground hover:underline"
+              >
+                {t("nav.terms")}
+              </Link>
+            </div>
+          </nav>
           <div className="mb-3">
             <LanguageSwitcher />
           </div>
@@ -86,8 +114,10 @@ export function AppShell({
         </div>
       </aside>
 
-      {/* Main content */}
-      <main className="min-w-0 flex-1 px-4 py-6 md:px-8">{children}</main>
+      {/* Main content — the only part that scrolls on desktop */}
+      <main className="min-w-0 flex-1 px-4 py-6 md:h-screen md:overflow-y-auto md:px-8">
+        {children}
+      </main>
     </div>
   );
 }

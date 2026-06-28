@@ -1,6 +1,6 @@
 import { cn } from "@/lib/utils";
 
-/** "payme" wordmark. Size is controlled by font-size. */
+/** "lendly" wordmark. Size is controlled by font-size. */
 export function Brand({ className }: { className?: string }) {
   return (
     <span
@@ -9,7 +9,7 @@ export function Brand({ className }: { className?: string }) {
         className,
       )}
     >
-      <span>payme.</span>
+      <span>lendly.</span>
     </span>
   );
 }

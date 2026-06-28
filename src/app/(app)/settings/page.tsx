@@ -1,0 +1,60 @@
+import { PageHeader } from "@/components/page-header";
+import { LanguageSwitcher } from "@/components/language-switcher";
+import { SetPasswordForm } from "@/components/set-password-form";
+import { ProfileForm } from "./profile-form";
+import { changePasswordAction } from "@/app/change-password/actions";
+import { getProfile } from "@/lib/auth";
+import { getT } from "@/lib/i18n/server";
+
+export const dynamic = "force-dynamic";
+
+function Section({
+  title,
+  description,
+  children,
+}: {
+  title: string;
+  description?: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <section className="mb-10">
+      <h2 className="text-sm font-medium uppercase tracking-wide text-muted-foreground">
+        {title}
+      </h2>
+      {description ? (
+        <p className="mb-3 mt-1 text-sm text-muted-foreground">{description}</p>
+      ) : (
+        <div className="mb-3" />
+      )}
+      {children}
+    </section>
+  );
+}
+
+export default async function SettingsPage() {
+  const [profile, t] = await Promise.all([getProfile(), getT()]);
+
+  return (
+    <div>
+      <PageHeader title={t("settings.title")} description={t("settings.description")} />
+
+      <Section title={t("settings.profile")}>
+        <ProfileForm profile={profile} />
+      </Section>
+
+      <Section title={t("settings.security")} description={t("settings.securityDesc")}>
+        <div className="max-w-sm">
+          <SetPasswordForm
+            action={changePasswordAction}
+            submitLabel={t("changePassword.submit")}
+          />
+        </div>
+      </Section>
+
+      <Section title={t("settings.language")}>
+        <LanguageSwitcher />
+      </Section>
+    </div>
+  );
+}

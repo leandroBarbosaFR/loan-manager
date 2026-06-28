@@ -96,7 +96,10 @@ export function CustomerForm({
         </div>
       </div>
 
-      <fieldset className="mb-4 rounded-lg border border-border bg-white p-4 shadow-sm">
+      <fieldset
+        data-tour="cf-address"
+        className="mb-4 rounded-lg border border-border bg-white p-4 shadow-sm"
+      >
         <legend className="px-1 text-xs font-medium uppercase tracking-wide text-muted-foreground">
           {t("customerForm.address")}
         </legend>
@@ -189,6 +192,8 @@ export function CustomerForm({
         htmlFor="referred_by_id"
         hint={t("customerForm.referredByHint")}
         errors={state?.fieldErrors?.referred_by_id}
+        className="mb-4"
+        data-tour="cf-referral"
       >
         <CustomerSearchSelect
           name="referred_by_id"

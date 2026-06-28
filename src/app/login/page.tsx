@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useActionState, useState } from "react";
 import { login } from "./actions";
 import { Brand } from "@/components/brand";
@@ -83,6 +84,13 @@ export default function LoginPage() {
             {t("login.signIn")}
           </SubmitButton>
         </form>
+
+        <Link
+          href="/forgot-password"
+          className="mt-4 inline-block text-sm text-muted-foreground underline-offset-2 hover:text-foreground hover:underline"
+        >
+          {t("login.forgot")}
+        </Link>
       </div>
     </main>
   );
