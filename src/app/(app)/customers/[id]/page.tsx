@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Stat, StatGrid } from "@/components/stat";
 import { StatusBadge } from "@/components/status-badge";
 import { EmptyState } from "@/components/empty-state";
+import { FilterTabs } from "@/components/filter-tabs";
 import { DeleteButton } from "@/components/delete-button";
 import {
   Table,
@@ -21,7 +22,7 @@ import {
 } from "@/lib/repositories/customers";
 import { listLoansByCustomer } from "@/lib/repositories/loans";
 import { deleteCustomerAction, deleteCustomerDocumentAction } from "../actions";
-import { loanTotals, round2 } from "@/lib/calc";
+import { loanTotals, round2, nextDueDate } from "@/lib/calc";
 import { formatMoney, formatDate } from "@/lib/format";
 import { getT } from "@/lib/i18n/server";
 
@@ -29,10 +30,14 @@ export const dynamic = "force-dynamic";
 
 export default async function CustomerDetailPage({
   params,
+  searchParams,
 }: {
   params: Promise<{ id: string }>;
+  searchParams: Promise<{ sort?: string }>;
 }) {
   const { id } = await params;
+  const { sort } = await searchParams;
+  const sortBy = sort === "due" ? "due" : "created";
   const [customer, loans, documents, t] = await Promise.all([
     getCustomer(id),
     listLoansByCustomer(id),
@@ -77,6 +82,19 @@ export default async function CustomerDetailPage({
   );
 
   const deleteAction = deleteCustomerAction.bind(null, id);
+
+  // Decorate loans with their next due date and sort by the chosen criterion.
+  const sortedLoans = loans
+    .map((loan) => ({ loan, nextDue: nextDueDate(loan.installments) }))
+    .sort((a, b) => {
+      if (sortBy === "due") {
+        if (a.nextDue === b.nextDue) return 0;
+        if (a.nextDue === null) return 1; // nothing outstanding → last
+        if (b.nextDue === null) return -1;
+        return a.nextDue.localeCompare(b.nextDue); // soonest first
+      }
+      return b.loan.loan_date.localeCompare(a.loan.loan_date); // newest first
+    });
 
   return (
     <div>
@@ -211,56 +229,71 @@ export default async function CustomerDetailPage({
           }
         />
       ) : (
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>{t("common.date")}</TableHead>
-              <TableHead className="text-right">{t("customerDetail.colPrincipal")}</TableHead>
-              <TableHead className="hidden text-right md:table-cell">
-                {t("customerDetail.colReceivable")}
-              </TableHead>
-              <TableHead className="hidden text-right sm:table-cell">
-                {t("common.paid")}
-              </TableHead>
-              <TableHead className="text-right">{t("customerDetail.colOutstanding")}</TableHead>
-              <TableHead>{t("common.status")}</TableHead>
-              <TableHead />
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {loans.map((loan) => {
-              const lt = loanTotals(loan, loan.installments);
-              return (
-                <TableRow key={loan.id}>
-                  <TableCell>{formatDate(loan.loan_date)}</TableCell>
-                  <TableCell className="text-right tabular-nums">
-                    {formatMoney(lt.principal)}
-                  </TableCell>
-                  <TableCell className="hidden text-right tabular-nums md:table-cell">
-                    {formatMoney(lt.receivable)}
-                  </TableCell>
-                  <TableCell className="hidden text-right tabular-nums sm:table-cell">
-                    {formatMoney(lt.paid)}
-                  </TableCell>
-                  <TableCell className="text-right tabular-nums">
-                    {formatMoney(lt.outstanding)}
-                  </TableCell>
-                  <TableCell>
-                    <StatusBadge status={loan.status} />
-                  </TableCell>
-                  <TableCell className="text-right">
-                    <Link
-                      href={`/loans/${loan.id}`}
-                      className="text-sm underline-offset-2 hover:underline"
-                    >
-                      {t("common.view")}
-                    </Link>
-                  </TableCell>
-                </TableRow>
-              );
-            })}
-          </TableBody>
-        </Table>
+        <>
+          <FilterTabs
+            basePath={`/customers/${id}`}
+            param="sort"
+            active={sortBy}
+            options={[
+              { value: "created", label: t("customerDetail.sortCreated") },
+              { value: "due", label: t("customerDetail.sortDue") },
+            ]}
+          />
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>{t("common.date")}</TableHead>
+                <TableHead>{t("loanDetail.colDueDate")}</TableHead>
+                <TableHead className="text-right">{t("customerDetail.colPrincipal")}</TableHead>
+                <TableHead className="hidden text-right md:table-cell">
+                  {t("customerDetail.colReceivable")}
+                </TableHead>
+                <TableHead className="hidden text-right sm:table-cell">
+                  {t("common.paid")}
+                </TableHead>
+                <TableHead className="text-right">{t("customerDetail.colOutstanding")}</TableHead>
+                <TableHead>{t("common.status")}</TableHead>
+                <TableHead />
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {sortedLoans.map(({ loan, nextDue }) => {
+                const lt = loanTotals(loan, loan.installments);
+                return (
+                  <TableRow key={loan.id}>
+                    <TableCell>{formatDate(loan.loan_date)}</TableCell>
+                    <TableCell className="tabular-nums">
+                      {nextDue ? formatDate(nextDue) : t("common.dash")}
+                    </TableCell>
+                    <TableCell className="text-right tabular-nums">
+                      {formatMoney(lt.principal)}
+                    </TableCell>
+                    <TableCell className="hidden text-right tabular-nums md:table-cell">
+                      {formatMoney(lt.receivable)}
+                    </TableCell>
+                    <TableCell className="hidden text-right tabular-nums sm:table-cell">
+                      {formatMoney(lt.paid)}
+                    </TableCell>
+                    <TableCell className="text-right tabular-nums">
+                      {formatMoney(lt.outstanding)}
+                    </TableCell>
+                    <TableCell>
+                      <StatusBadge status={loan.status} />
+                    </TableCell>
+                    <TableCell className="text-right">
+                      <Link
+                        href={`/loans/${loan.id}`}
+                        className="text-sm underline-offset-2 hover:underline"
+                      >
+                        {t("common.view")}
+                      </Link>
+                    </TableCell>
+                  </TableRow>
+                );
+              })}
+            </TableBody>
+          </Table>
+        </>
       )}
 
       <div className="mt-8 border-t border-border pt-4">
