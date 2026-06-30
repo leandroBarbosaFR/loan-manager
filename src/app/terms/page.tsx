@@ -1,4 +1,5 @@
 import { PageHeader } from "@/components/page-header";
+import { LegalShell } from "@/components/legal-shell";
 import { getLocale } from "@/lib/i18n/server";
 
 export const dynamic = "force-dynamic";
@@ -25,7 +26,7 @@ export default async function TermsPage() {
   const pt = (await getLocale()) === "pt-BR";
 
   return (
-    <div className="max-w-2xl">
+    <LegalShell>
       <PageHeader title={pt ? "Termos de uso" : "Terms of use"} />
 
       <p className="mb-6 text-xs text-muted-foreground">
@@ -125,6 +126,6 @@ export default async function TermsPage() {
           </p>
         </Clause>
       </div>
-    </div>
+    </LegalShell>
   );
 }

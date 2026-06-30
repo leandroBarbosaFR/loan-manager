@@ -37,7 +37,8 @@ export default async function CustomerDetailPage({
 }) {
   const { id } = await params;
   const { sort } = await searchParams;
-  const sortBy = sort === "due" ? "due" : "created";
+  // Default to "due" so the soonest-to-expire loan is on top, as before.
+  const sortBy = sort === "created" ? "created" : "due";
   const [customer, loans, documents, t] = await Promise.all([
     getCustomer(id),
     listLoansByCustomer(id),

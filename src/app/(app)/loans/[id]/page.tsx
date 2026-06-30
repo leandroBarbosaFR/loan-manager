@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { PageHeader } from "@/components/page-header";
+import { BackButton } from "@/components/back-button";
 import { Button } from "@/components/ui/button";
 import { Stat, StatGrid } from "@/components/stat";
 import { StatusBadge } from "@/components/status-badge";
@@ -76,6 +77,7 @@ export default async function LoanDetailPage({
 
   return (
     <div>
+      <BackButton fallbackHref="/loans" />
       <PageHeader
         title={loan.customer?.name ?? t("loanDetail.loanTitle")}
         description={t("loanDetail.issued", { date: formatDate(loan.loan_date) })}

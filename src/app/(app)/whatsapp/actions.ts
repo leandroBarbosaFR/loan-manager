@@ -50,13 +50,14 @@ export async function sendTestMessageAction(
   const whichRaw = String(formData.get("test_which") ?? "due");
   const which: ReminderType =
     whichRaw === "d2" || whichRaw === "d1" ? whichRaw : "due";
+  const customerId = String(formData.get("test_customer") ?? "").trim() || undefined;
 
   if (!to) {
     return { ok: false, error: "Enter a phone number to send the test to." };
   }
 
   try {
-    await sendTestReminder(to, which);
+    await sendTestReminder(to, which, customerId);
   } catch (e) {
     return {
       ok: false,

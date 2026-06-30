@@ -85,14 +85,14 @@ export function AppShell({
             </Link>
             <div className="flex gap-3 px-3 pt-1 text-xs text-muted-foreground">
               <Link
-                href="/legal/privacy"
+                href="/privacy"
                 onClick={() => setOpen(false)}
                 className="underline-offset-2 hover:text-foreground hover:underline"
               >
                 {t("nav.privacy")}
               </Link>
               <Link
-                href="/legal/terms"
+                href="/terms"
                 onClick={() => setOpen(false)}
                 className="underline-offset-2 hover:text-foreground hover:underline"
               >

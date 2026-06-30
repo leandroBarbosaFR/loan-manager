@@ -55,6 +55,7 @@ export async function saveWhatsappSettings(
 export async function sendTestReminder(
   to: string,
   which: ReminderType,
+  customerId?: string,
 ): Promise<void> {
   const settings = await getWhatsappSettings();
   if (!settings) throw new Error("Save your WhatsApp settings first.");
@@ -83,11 +84,36 @@ export async function sendTestReminder(
   }
 
   const offset = which === "d2" ? 2 : which === "d1" ? 1 : 0;
-  const body = renderMessage(phrase, {
-    nome: "Maria",
-    data: formatDate(addDays(today(), offset)),
-    valor: formatMoney(100),
-  });
+
+  // Default to sample values; if a customer is chosen, use their real name and
+  // the soonest unpaid installment (so you can verify the real-name output).
+  let nome = "Maria";
+  let data = formatDate(addDays(today(), offset));
+  let valor = formatMoney(100);
+  if (customerId) {
+    const supabase = await createClient();
+    const { data: customer } = await supabase
+      .from("customers")
+      .select("name")
+      .eq("id", customerId)
+      .maybeSingle();
+    if (customer?.name) nome = customer.name.split(" ")[0] ?? customer.name;
+
+    const { data: insts } = await supabase
+      .from("installments")
+      .select("due_date, amount, paid_at, loans!inner(customer_id)")
+      .eq("loans.customer_id", customerId)
+      .is("paid_at", null)
+      .order("due_date", { ascending: true })
+      .limit(1);
+    const next = insts?.[0] as { due_date: string; amount: number } | undefined;
+    if (next) {
+      data = formatDate(next.due_date);
+      valor = formatMoney(next.amount);
+    }
+  }
+
+  const body = renderMessage(phrase, { nome, data, valor });
   await sendTemplateMessage({
     to: number,
     template,

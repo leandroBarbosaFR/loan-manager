@@ -9,7 +9,11 @@ import { useActionToast } from "@/components/toast";
 import { useT } from "@/lib/i18n/context";
 import { sendTestMessageAction } from "./actions";
 
-export function TestSender() {
+export function TestSender({
+  customers,
+}: {
+  customers: { id: string; name: string }[];
+}) {
   const t = useT();
   const [state, formAction] = useActionState(sendTestMessageAction, null);
 
@@ -18,6 +22,21 @@ export function TestSender() {
   return (
     <form action={formAction} className="max-w-3xl">
       <FormError message={state?.error} />
+
+      <FormField
+        label={t("whatsapp.testCustomer")}
+        htmlFor="test_customer"
+        hint={t("whatsapp.testCustomerHint")}
+      >
+        <Select id="test_customer" name="test_customer" defaultValue="">
+          <option value="">{t("whatsapp.testCustomerNone")}</option>
+          {customers.map((c) => (
+            <option key={c.id} value={c.id}>
+              {c.name}
+            </option>
+          ))}
+        </Select>
+      </FormField>
 
       <div className="grid grid-cols-1 items-end gap-x-4 sm:grid-cols-[1fr_1fr_auto]">
         <FormField label={t("whatsapp.testNumber")} htmlFor="test_to">

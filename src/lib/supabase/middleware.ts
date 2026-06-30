@@ -2,7 +2,14 @@ import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 import type { Database } from "@/types/database";
 
-const PUBLIC_PATHS = ["/", "/login", "/auth", "/forgot-password"];
+const PUBLIC_PATHS = [
+  "/",
+  "/login",
+  "/auth",
+  "/forgot-password",
+  "/privacy",
+  "/terms",
+];
 
 /**
  * Refreshes the Supabase session cookie and guards protected routes.
