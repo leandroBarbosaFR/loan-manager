@@ -43,7 +43,7 @@ export function PaymentControl({ installment }: { installment: Installment }) {
     );
     return (
       <form action={clear}>
-        <Button type="submit" variant="ghost" size="sm">
+        <Button type="submit" variant="destructive" size="sm">
           {t("payment.undo")}
         </Button>
       </form>
@@ -143,7 +143,7 @@ function ClearButton({
   const clear = clearPaymentAction.bind(null, installmentId, loanId);
   return (
     <form action={clear}>
-      <Button type="submit" variant="ghost" size="sm">
+      <Button type="submit" variant="destructive" size="sm">
         {label}
       </Button>
     </form>

@@ -36,6 +36,46 @@ function DownloadLink({ type, label }: { type: string; label: string }) {
 function LoanReportTable({ rows, t }: { rows: LoanReportRow[]; t: Translator }) {
   if (rows.length === 0) return <EmptyState title={t("reports.nothing")} />;
   return (
+    <>
+      {/* Mobile: cards */}
+      <div className="space-y-3 md:hidden">
+        {rows.map((r, i) => (
+          <div
+            key={i}
+            className="rounded-lg border border-border bg-white p-4 shadow-xs"
+          >
+            <div className="flex items-start justify-between gap-3">
+              <span className="font-medium">{r.customer}</span>
+              <StatusBadge status={r.status as LoanStatus} />
+            </div>
+            <dl className="mt-3 grid grid-cols-2 gap-x-4 gap-y-2 text-sm">
+              <div>
+                <dt className="text-xs text-muted-foreground">{t("reports.colDate")}</dt>
+                <dd>{formatDate(r.loan_date)}</dd>
+              </div>
+              <div className="text-right">
+                <dt className="text-xs text-muted-foreground">{t("reports.colPrincipal")}</dt>
+                <dd className="tabular-nums">{formatMoney(r.principal)}</dd>
+              </div>
+              <div>
+                <dt className="text-xs text-muted-foreground">{t("reports.colReceivable")}</dt>
+                <dd className="tabular-nums">{formatMoney(r.receivable)}</dd>
+              </div>
+              <div className="text-right">
+                <dt className="text-xs text-muted-foreground">{t("reports.colPaid")}</dt>
+                <dd className="tabular-nums">{formatMoney(r.paid)}</dd>
+              </div>
+              <div>
+                <dt className="text-xs text-muted-foreground">{t("reports.colOutstanding")}</dt>
+                <dd className="tabular-nums">{formatMoney(r.outstanding)}</dd>
+              </div>
+            </dl>
+          </div>
+        ))}
+      </div>
+
+      {/* Desktop: table */}
+      <div className="hidden md:block">
     <Table>
       <TableHeader>
         <TableRow>
@@ -78,6 +118,8 @@ function LoanReportTable({ rows, t }: { rows: LoanReportRow[]; t: Translator }) 
         ))}
       </TableBody>
     </Table>
+      </div>
+    </>
   );
 }
 
@@ -155,6 +197,27 @@ export default async function ReportsPage() {
         {collections.length === 0 ? (
           <EmptyState title={t("reports.noPayments")} />
         ) : (
+          <>
+          {/* Mobile: cards */}
+          <div className="space-y-3 md:hidden">
+            {collections.map((r) => (
+              <div
+                key={r.month}
+                className="flex items-center justify-between gap-3 rounded-lg border border-border bg-white p-4 text-sm shadow-xs"
+              >
+                <span className="font-medium">{r.month}</span>
+                <div className="text-right">
+                  <p className="text-xs text-muted-foreground">
+                    {t("reports.colPayments")}: <span className="tabular-nums">{r.count}</span>
+                  </p>
+                  <p className="tabular-nums font-medium">{formatMoney(r.total)}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {/* Desktop: table */}
+          <div className="hidden md:block">
           <Table>
             <TableHeader>
               <TableRow>
@@ -177,6 +240,8 @@ export default async function ReportsPage() {
               ))}
             </TableBody>
           </Table>
+          </div>
+          </>
         )}
       </ReportSection>
     </div>

@@ -27,7 +27,7 @@ export function AppShell({
     <div className="relative flex min-h-screen flex-col md:h-screen md:flex-row md:overflow-hidden">
       {/* Mobile top bar */}
       <header className="sticky top-0 z-40 flex items-center justify-between border-b border-border bg-background px-4 py-3 md:hidden">
-        <Brand className="text-xl" />
+        <Brand className="text-3xl" />
         <Button
           variant="outline"
           size="sm"
@@ -59,7 +59,7 @@ export function AppShell({
       >
         {/* Mobile drawer header */}
         <div className="flex items-center justify-between border-b border-border px-4 py-3 md:hidden">
-          <Brand className="text-xl" />
+          <Brand className="text-3xl" />
           <Button
             variant="outline"
             size="sm"
@@ -70,7 +70,7 @@ export function AppShell({
         </div>
         {/* Desktop logo */}
         <div className="hidden px-4 py-5 md:block">
-          <Brand className="text-2xl" />
+          <Brand className="text-4xl" />
         </div>
         <Nav onNavigate={() => setOpen(false)} isSuperAdmin={isSuperAdmin} />
         <div className="mt-auto border-t border-border p-4">

@@ -11,7 +11,7 @@ export default async function LandingPage() {
   return (
     <div className="flex min-h-screen flex-col bg-canvas">
       <header className="flex items-center justify-between border-b border-border bg-white px-6 py-4">
-        <Brand className="text-xl" />
+        <Brand className="text-3xl" />
         <Link href="/login">
           <Button variant="outline">{t("landing.login")}</Button>
         </Link>

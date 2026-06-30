@@ -108,6 +108,63 @@ export default async function LoansPage({
             />
           ) : (
             <>
+        {/* Mobile: cards */}
+        <div className="space-y-3 md:hidden">
+          {loans.map(({ loan, nextDue }) => {
+            const overdue = nextDue != null && nextDue < todayStr;
+            return (
+              <Link
+                key={loan.id}
+                href={`/loans/${loan.id}`}
+                className="block rounded-lg border border-border bg-white p-4 shadow-xs transition-colors hover:bg-muted/50"
+              >
+                <div className="flex items-start justify-between gap-3">
+                  <span className="font-medium">{loan.customer?.name ?? "—"}</span>
+                  <StatusBadge status={loan.status} />
+                </div>
+                <dl className="mt-3 grid grid-cols-2 gap-x-4 gap-y-2 text-sm">
+                  <div>
+                    <dt className="text-xs text-muted-foreground">
+                      {t("loans.colNextPayment")}
+                    </dt>
+                    <dd
+                      className={
+                        overdue ? "font-medium text-destructive" : undefined
+                      }
+                    >
+                      {nextDue ? formatDate(nextDue) : t("common.dash")}
+                    </dd>
+                  </div>
+                  <div className="text-right">
+                    <dt className="text-xs text-muted-foreground">
+                      {t("loans.colAmountLoaned")}
+                    </dt>
+                    <dd className="tabular-nums">{formatMoney(loan.principal)}</dd>
+                  </div>
+                  <div>
+                    <dt className="text-xs text-muted-foreground">
+                      {t("loans.colReceivable")}
+                    </dt>
+                    <dd className="tabular-nums">
+                      {formatMoney(loan.total_receivable)}
+                    </dd>
+                  </div>
+                  <div className="text-right">
+                    <dt className="text-xs text-muted-foreground">
+                      {t("loans.colProfit")}
+                    </dt>
+                    <dd className="tabular-nums">
+                      {formatMoney(round2(loan.total_receivable - loan.principal))}
+                    </dd>
+                  </div>
+                </dl>
+              </Link>
+            );
+          })}
+        </div>
+
+        {/* Desktop: table */}
+        <div className="hidden md:block">
         <Table>
           <TableHeader>
             <TableRow>
@@ -170,6 +227,7 @@ export default async function LoansPage({
             })}
           </TableBody>
         </Table>
+        </div>
 
               <Pagination
                 currentPage={currentPage}

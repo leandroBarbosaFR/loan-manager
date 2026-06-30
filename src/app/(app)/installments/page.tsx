@@ -75,6 +75,70 @@ export default async function InstallmentsPage({
       {rows.length === 0 ? (
         <EmptyState title={t("installments.empty")} />
       ) : (
+        <>
+        {/* Mobile: cards */}
+        <div className="space-y-3 md:hidden">
+          {rows.map((inst) => (
+            <div
+              key={inst.id}
+              className="rounded-lg border border-border bg-white p-4 shadow-xs"
+            >
+              <div className="flex items-start justify-between gap-3">
+                <span className="font-medium">
+                  {inst.loan?.customer ? (
+                    <Link
+                      href={`/customers/${inst.loan.customer.id}`}
+                      className="underline-offset-2 hover:underline"
+                    >
+                      {inst.loan.customer.name}
+                    </Link>
+                  ) : (
+                    "—"
+                  )}
+                </span>
+                <StatusBadge status={effectiveInstallmentStatus(inst)} />
+              </div>
+              <dl className="mt-3 grid grid-cols-2 gap-x-4 gap-y-2 text-sm">
+                <div>
+                  <dt className="text-xs text-muted-foreground">
+                    {t("installments.colDueDate")}
+                  </dt>
+                  <dd>{formatDate(inst.due_date)}</dd>
+                </div>
+                <div className="text-right">
+                  <dt className="text-xs text-muted-foreground">
+                    {t("common.amount")}
+                  </dt>
+                  <dd className="tabular-nums">{formatMoney(inst.amount)}</dd>
+                </div>
+                <div className="text-right">
+                  <dt className="text-xs text-muted-foreground">{t("common.paid")}</dt>
+                  <dd className="tabular-nums">
+                    {inst.paid_amount != null
+                      ? formatMoney(inst.paid_amount)
+                      : t("common.dash")}
+                  </dd>
+                </div>
+              </dl>
+              <div className="mt-3 flex items-center justify-between gap-2 border-t border-border pt-3">
+                {inst.loan ? (
+                  <Link
+                    href={`/loans/${inst.loan.id}`}
+                    className="text-sm text-muted-foreground underline-offset-2 hover:underline"
+                  >
+                    {t("installments.loanLink")}
+                  </Link>
+                ) : (
+                  <span />
+                )}
+                <PaymentControl installment={inst} />
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* Desktop: table */}
+        <div className="hidden md:block">
         <Table>
           <TableHeader>
             <TableRow>
@@ -132,6 +196,8 @@ export default async function InstallmentsPage({
             ))}
           </TableBody>
         </Table>
+        </div>
+        </>
       )}
     </div>
   );

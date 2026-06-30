@@ -6,6 +6,7 @@ const config: Config = {
     extend: {
       fontFamily: {
         sans: ["var(--font-inter)", "system-ui", "sans-serif"],
+        brand: ["var(--font-brand)", "cursive"],
       },
       colors: {
         border: "#e6e7eb",

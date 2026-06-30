@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import { Inter, Nanum_Pen_Script } from "next/font/google";
 import "./globals.css";
 import { I18nProvider } from "@/lib/i18n/context";
 import { getDictionary } from "@/lib/i18n/dictionaries";
@@ -8,6 +8,13 @@ import { getLocale } from "@/lib/i18n/server";
 const inter = Inter({
   subsets: ["latin"],
   variable: "--font-inter",
+  display: "swap",
+});
+
+const nanumPenScript = Nanum_Pen_Script({
+  subsets: ["latin"],
+  weight: "400",
+  variable: "--font-brand",
   display: "swap",
 });
 
@@ -23,7 +30,7 @@ export default async function RootLayout({
   const messages = getDictionary(locale);
 
   return (
-    <html lang={locale} className={inter.variable}>
+    <html lang={locale} className={`${inter.variable} ${nanumPenScript.variable}`}>
       <body className="min-h-screen bg-canvas font-sans text-foreground antialiased">
         <I18nProvider locale={locale} messages={messages}>
           {children}

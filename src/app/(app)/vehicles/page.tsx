@@ -81,6 +81,7 @@ export default async function VehiclesPage({
                 {t("vehicles.colPlate")}
               </TableHead>
               <TableHead>{t("vehicles.colStatus")}</TableHead>
+              <TableHead />
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -104,6 +105,13 @@ export default async function VehiclesPage({
                   <Badge variant={v.status === "available" ? "paid" : "default"}>
                     {t(STATUS_KEY[v.status])}
                   </Badge>
+                </TableCell>
+                <TableCell className="text-right">
+                  {v.status === "available" ? (
+                    <Link href={`/vehicles/${v.id}/rent`}>
+                      <Button size="sm">{t("vehicleDetail.rentButton")}</Button>
+                    </Link>
+                  ) : null}
                 </TableCell>
               </TableRow>
             ))}
