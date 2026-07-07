@@ -8,7 +8,7 @@ export default async function CalculatorPage() {
     <div>
       <PageHeader
         title={t("calculator.title")}
-        description={t("calculator.description")}
+        // description={t("calculator.description")}
       />
       <Calculator />
     </div>

@@ -11,7 +11,7 @@ export default function ChangePasswordPage() {
   const t = useT();
   return (
     <main className="flex min-h-screen items-center justify-center bg-canvas px-4">
-      <div className="w-full max-w-sm rounded-xl border border-border bg-white p-6 shadow-md">
+      <div className="w-full max-w-sm rounded-xl bg-white p-6 shadow-md">
         <Brand className="mb-4 text-3xl" />
         <h1 className="text-lg font-semibold">{t("changePassword.title")}</h1>
         <p className="mb-6 mt-1 text-sm text-muted-foreground">

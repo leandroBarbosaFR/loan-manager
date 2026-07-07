@@ -118,7 +118,7 @@ export default async function LoanDetailPage({
       />
 
       {loan.renegotiated_to_id ? (
-        <div className="mb-4 rounded-lg border border-border bg-muted px-3 py-2 text-sm">
+        <div className="mb-4 rounded-lg bg-muted px-3 py-2 text-sm">
           {t("renegotiate.toBanner")}{" "}
           <Link
             href={`/loans/${loan.renegotiated_to_id}`}
@@ -129,7 +129,7 @@ export default async function LoanDetailPage({
         </div>
       ) : null}
       {loan.renegotiated_from_id ? (
-        <div className="mb-4 rounded-lg border border-border bg-muted px-3 py-2 text-sm">
+        <div className="mb-4 rounded-lg bg-muted px-3 py-2 text-sm">
           {t("renegotiate.fromBanner")}{" "}
           <Link
             href={`/loans/${loan.renegotiated_from_id}`}
@@ -141,7 +141,7 @@ export default async function LoanDetailPage({
       ) : null}
 
       {isRollover ? (
-        <div className="mb-4 rounded-lg border border-border bg-muted px-3 py-2 text-sm">
+        <div className="mb-4 rounded-lg bg-muted px-3 py-2 text-sm">
           {t("loanDetail.rolloverBannerPrefix")}{" "}
           <span className="font-medium tabular-nums">
             {formatMoney(loan.rollover_fee ?? 0)}
@@ -183,7 +183,7 @@ export default async function LoanDetailPage({
           </>
         ) : null}
         {loan.customer ? (
-          <div className="rounded-lg border border-border bg-white p-5 shadow-sm">
+          <div className="rounded-lg bg-white p-5 shadow-sm">
             <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
               {t("common.customer")}
             </p>
@@ -198,7 +198,7 @@ export default async function LoanDetailPage({
       </StatGrid>
 
       {loan.notes ? (
-        <div className="mt-6 rounded-lg border border-border bg-white p-4 text-sm shadow-sm">
+        <div className="mt-6 rounded-lg bg-white p-4 text-sm shadow-sm">
           <p className="mb-1 text-xs uppercase tracking-wide text-muted-foreground">
             {t("loanDetail.notes")}
           </p>

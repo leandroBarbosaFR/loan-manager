@@ -18,7 +18,7 @@ export function Stat({
   emphasis?: "default" | "success" | "destructive" | "warning";
 }) {
   return (
-    <div className="rounded-lg border border-border bg-white p-5 shadow-sm transition-shadow hover:shadow-md">
+    <div className="rounded-lg bg-white p-5 shadow-sm transition-shadow hover:shadow-md">
       <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
         {label}
       </p>

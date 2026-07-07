@@ -135,7 +135,7 @@ export function Calculator() {
   }, [inputDigit, chooseOperator, percent, equals, backspace, reset]);
 
   return (
-    <div className="max-w-xs overflow-hidden rounded-xl border border-border bg-white shadow-sm">
+    <div className="max-w-xs overflow-hidden rounded-xl bg-white shadow-sm">
       <div className="flex min-h-[6rem] flex-col items-end justify-end gap-1 bg-muted/40 px-5 py-4">
         <span className="h-4 text-xs text-muted-foreground tabular-nums">
           {previous !== null && operator

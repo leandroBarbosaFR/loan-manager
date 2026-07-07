@@ -50,7 +50,7 @@ export default async function InstallmentsPage({
     <div>
       <PageHeader
         title={t("installments.title")}
-        description={t("installments.description")}
+        // description={t("installments.description")}
       />
 
       <FilterTabs
@@ -81,7 +81,7 @@ export default async function InstallmentsPage({
           {rows.map((inst) => (
             <div
               key={inst.id}
-              className="rounded-lg border border-border bg-white p-4 shadow-xs"
+              className="rounded-lg bg-white p-4 shadow-xs"
             >
               <div className="flex items-start justify-between gap-3">
                 <span className="font-medium">

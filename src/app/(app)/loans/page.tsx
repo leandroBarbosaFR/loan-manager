@@ -74,7 +74,7 @@ export default async function LoansPage({
     <div>
       <PageHeader
         title={t("loans.title")}
-        description={t("loans.description")}
+        // description={t("loans.description")}
         action={
           <div className="flex items-center gap-2">
             <FeatureTour id="loans" />
@@ -116,7 +116,7 @@ export default async function LoansPage({
               <Link
                 key={loan.id}
                 href={`/loans/${loan.id}`}
-                className="block rounded-lg border border-border bg-white p-4 shadow-xs transition-colors hover:bg-muted/50"
+                className="block rounded-lg bg-white p-4 shadow-xs transition-colors hover:bg-muted/50"
               >
                 <div className="flex items-start justify-between gap-3">
                   <span className="font-medium">{loan.customer?.name ?? "—"}</span>

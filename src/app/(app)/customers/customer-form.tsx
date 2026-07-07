@@ -98,7 +98,7 @@ export function CustomerForm({
 
       <fieldset
         data-tour="cf-address"
-        className="mb-4 rounded-lg border border-border bg-white p-4 shadow-sm"
+        className="mb-4 rounded-lg bg-white p-4 shadow-sm"
       >
         <legend className="px-1 text-xs font-medium uppercase tracking-wide text-muted-foreground">
           {t("customerForm.address")}

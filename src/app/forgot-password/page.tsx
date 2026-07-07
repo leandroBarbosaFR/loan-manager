@@ -15,7 +15,7 @@ export default function ForgotPasswordPage() {
 
   return (
     <main className="flex min-h-screen items-center justify-center bg-canvas px-4">
-      <div className="w-full max-w-sm rounded-xl border border-border bg-white p-6 shadow-md">
+      <div className="w-full max-w-sm rounded-xl bg-white p-6 shadow-md">
         <Brand className="mb-4 text-3xl" />
         {state?.ok ? (
           <>

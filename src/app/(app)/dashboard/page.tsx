@@ -1,24 +1,149 @@
 import Link from "next/link";
 import { PageHeader } from "@/components/page-header";
-import { Stat, StatGrid } from "@/components/stat";
 import { Button } from "@/components/ui/button";
 import { FeatureTour } from "@/components/feature-tour";
 import { getDashboardStats } from "@/lib/repositories/stats";
-import { refreshOverdueStatuses } from "@/lib/repositories/installments";
-import { formatMoney } from "@/lib/format";
+import {
+  refreshOverdueStatuses,
+  listDueSoon,
+} from "@/lib/repositories/installments";
+import { round2 } from "@/lib/calc";
+import { formatMoney, today, addDays } from "@/lib/format";
+import type { MessageKey, Translator } from "@/lib/i18n/dictionaries";
+import type { InstallmentWithRelations } from "@/types/database";
 import { getT } from "@/lib/i18n/server";
 
 export const dynamic = "force-dynamic";
 
+function Metric({
+  label,
+  value,
+  tone,
+}: {
+  label: string;
+  value: string;
+  tone?: "success" | "warning";
+}) {
+  const color =
+    tone === "success"
+      ? "text-success"
+      : tone === "warning"
+        ? "text-warning"
+        : "text-foreground";
+  return (
+    <div>
+      <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
+        {label}
+      </p>
+      <p className={`mt-1.5 text-3xl font-semibold tabular-nums ${color}`}>
+        {value}
+      </p>
+    </div>
+  );
+}
+
+type BucketKey = "overdue" | "today" | "j1" | "j2" | "j3";
+
+const BUCKETS: { key: BucketKey; label: MessageKey; danger?: boolean; warn?: boolean }[] = [
+  { key: "overdue", label: "dashboard.dueOverdue", danger: true },
+  { key: "today", label: "dashboard.dueToday", warn: true },
+  { key: "j1", label: "dashboard.dueJ1" },
+  { key: "j2", label: "dashboard.dueJ2" },
+  { key: "j3", label: "dashboard.dueJ3" },
+];
+
+function DueBucket({
+  bucket,
+  items,
+  t,
+}: {
+  bucket: (typeof BUCKETS)[number];
+  items: InstallmentWithRelations[];
+  t: Translator;
+}) {
+  const total = round2(
+    items.reduce((s, i) => s + (i.amount - (i.paid_amount ?? 0)), 0),
+  );
+  const valueClass = bucket.danger
+    ? "text-destructive"
+    : bucket.warn
+      ? "text-warning"
+      : "text-foreground";
+
+  return (
+    <div className="rounded-lg bg-white p-4 shadow-sm">
+      <div className="flex items-center justify-between">
+        <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
+          {t(bucket.label)}
+        </p>
+        <span className="rounded-full bg-muted px-2 py-0.5 text-xs font-medium tabular-nums text-muted-foreground">
+          {items.length}
+        </span>
+      </div>
+      <p className={`mt-1 text-lg font-semibold tabular-nums ${valueClass}`}>
+        {formatMoney(total)}
+      </p>
+      {items.length === 0 ? (
+        <p className="mt-3 text-sm text-muted-foreground">{t("common.dash")}</p>
+      ) : (
+        <ul className="mt-3 space-y-0.5 text-sm">
+          {items.map((i) => (
+            <li key={i.id}>
+              <Link
+                href={`/loans/${i.loan_id}`}
+                className="-mx-2 flex items-center justify-between gap-2 rounded-md px-2 py-1 transition-colors hover:bg-muted"
+              >
+                <span className="truncate">{i.loan?.customer?.name ?? "—"}</span>
+                <span className="shrink-0 tabular-nums text-muted-foreground">
+                  {formatMoney(round2(i.amount - (i.paid_amount ?? 0)))}
+                </span>
+              </Link>
+            </li>
+          ))}
+        </ul>
+      )}
+    </div>
+  );
+}
+
 export default async function DashboardPage() {
   await refreshOverdueStatuses();
-  const [stats, t] = await Promise.all([getDashboardStats(), getT()]);
+  const [stats, dueSoon, t] = await Promise.all([
+    getDashboardStats(),
+    listDueSoon(),
+    getT(),
+  ]);
+
+  const todayStr = today();
+  const d1 = addDays(todayStr, 1);
+  const d2 = addDays(todayStr, 2);
+  const bucketed: Record<BucketKey, InstallmentWithRelations[]> = {
+    overdue: [],
+    today: [],
+    j1: [],
+    j2: [],
+    j3: [],
+  };
+  for (const inst of dueSoon) {
+    const d = inst.due_date;
+    const key: BucketKey =
+      d < todayStr
+        ? "overdue"
+        : d === todayStr
+          ? "today"
+          : d === d1
+            ? "j1"
+            : d === d2
+              ? "j2"
+              : "j3";
+    bucketed[key].push(inst);
+  }
 
   return (
     <div>
       <PageHeader
         title={t("dashboard.title")}
-        description={t("dashboard.description")}
+        // description={t("dashboard.description")}
         action={
           <div className="flex items-center gap-2">
             <FeatureTour id="welcome" />
@@ -29,38 +154,68 @@ export default async function DashboardPage() {
         }
       />
 
-      <StatGrid>
-        <Stat
-          label={t("dashboard.principalLent")}
-          value={formatMoney(stats.totalPrincipal)}
-        />
-        <Stat
-          label={t("dashboard.expectedReceivable")}
-          value={formatMoney(stats.totalReceivable)}
-        />
-        <Stat
-          label={t("dashboard.expectedProfit")}
-          value={formatMoney(stats.totalProfit)}
-          emphasis="success"
-        />
-        <Stat
-          label={t("dashboard.collected")}
-          value={formatMoney(stats.totalCollected)}
-          emphasis="success"
-        />
-        <Stat
-          label={t("dashboard.outstanding")}
-          value={formatMoney(stats.outstanding)}
-          emphasis="warning"
-        />
-        <Stat label={t("dashboard.openLoans")} value={stats.openLoans} />
-        <Stat
-          label={t("dashboard.overdueLoans")}
-          value={stats.overdueLoans}
-          emphasis={stats.overdueLoans > 0 ? "destructive" : "default"}
-        />
-        <Stat label={t("dashboard.paidLoans")} value={stats.paidLoans} />
-      </StatGrid>
+      <div className="rounded-xl bg-white p-6 shadow-sm">
+        <p className="text-sm font-medium text-muted-foreground">
+          {t("dashboard.overview")}
+        </p>
+        <div className="mt-4 grid grid-cols-2 gap-x-6 gap-y-6 lg:grid-cols-4">
+          <Metric
+            label={t("dashboard.principalLent")}
+            value={formatMoney(stats.totalPrincipal)}
+          />
+          <Metric
+            label={t("dashboard.expectedReceivable")}
+            value={formatMoney(stats.totalReceivable)}
+          />
+          <Metric
+            label={t("dashboard.collected")}
+            value={formatMoney(stats.totalCollected)}
+            tone="success"
+          />
+          <Metric
+            label={t("dashboard.outstanding")}
+            value={formatMoney(stats.outstanding)}
+            tone="warning"
+          />
+        </div>
+        <div className="mt-6 flex flex-wrap items-center gap-x-6 gap-y-2 border-t border-border pt-4 text-sm text-muted-foreground">
+          <span>
+            {t("dashboard.expectedProfit")}:{" "}
+            <strong className="font-semibold tabular-nums text-success">
+              {formatMoney(stats.totalProfit)}
+            </strong>
+          </span>
+          <span>
+            {t("dashboard.openLoans")}:{" "}
+            <strong className="font-semibold tabular-nums text-foreground">
+              {stats.openLoans}
+            </strong>
+          </span>
+          <span>
+            {t("dashboard.overdueLoans")}:{" "}
+            <strong
+              className={`font-semibold tabular-nums ${stats.overdueLoans > 0 ? "text-destructive" : "text-foreground"}`}
+            >
+              {stats.overdueLoans}
+            </strong>
+          </span>
+          <span>
+            {t("dashboard.paidLoans")}:{" "}
+            <strong className="font-semibold tabular-nums text-foreground">
+              {stats.paidLoans}
+            </strong>
+          </span>
+        </div>
+      </div>
+
+      <h2 className="mb-3 mt-8 text-sm font-medium uppercase tracking-wide text-muted-foreground">
+        {t("dashboard.dueTitle")}
+      </h2>
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-5">
+        {BUCKETS.map((b) => (
+          <DueBucket key={b.key} bucket={b} items={bucketed[b.key]} t={t} />
+        ))}
+      </div>
 
       <div className="mt-6 flex flex-wrap gap-3 text-sm text-muted-foreground">
         <span>{t("dashboard.customersCount", { count: stats.totalCustomers })}</span>

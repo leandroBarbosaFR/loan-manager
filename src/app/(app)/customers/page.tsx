@@ -29,7 +29,7 @@ export default async function CustomersPage({
     <div>
       <PageHeader
         title={t("customers.title")}
-        description={t("customers.description")}
+        // description={t("customers.description")}
         action={
           <div className="flex items-center gap-2">
             <FeatureTour id="customers" />

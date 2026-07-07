@@ -3,10 +3,26 @@ import { createClient } from "@/lib/supabase/server";
 import type { InstallmentWithRelations, InstallmentStatus } from "@/types/database";
 import type { InstallmentScheduleInput } from "@/lib/validations";
 import { effectiveInstallmentStatus } from "@/lib/calc";
-import { today } from "@/lib/format";
+import { today, addDays } from "@/lib/format";
 import { syncLoanStatus } from "@/lib/repositories/loans";
 
 export type InstallmentFilter = "all" | "pending" | "paid" | "overdue";
+
+/**
+ * Unpaid installments that are overdue or due within the next 3 days, joined
+ * with their loan + customer. Used by the dashboard's upcoming-due panel.
+ */
+export async function listDueSoon(): Promise<InstallmentWithRelations[]> {
+  const supabase = await createClient();
+  const { data, error } = await supabase
+    .from("installments")
+    .select("*, loan:loans(*, customer:customers(*))")
+    .is("paid_at", null)
+    .lte("due_date", addDays(today(), 3))
+    .order("due_date", { ascending: true });
+  if (error) throw error;
+  return (data ?? []) as unknown as InstallmentWithRelations[];
+}
 
 export async function listInstallments(
   filter: InstallmentFilter = "all",

@@ -24,7 +24,8 @@ export function AppShell({
   const t = useT();
 
   return (
-    <div className="relative flex min-h-screen flex-col md:h-screen md:flex-row md:overflow-hidden">
+    <div className="min-h-screen bg-[#f1f1f1] md:p-4">
+      <div className="relative bg-[#f1f1f1] flex min-h-screen flex-col md:h-[calc(100vh-2rem)] md:flex-row md:overflow-hidden">
       {/* Mobile top bar */}
       <header className="sticky top-0 z-40 flex items-center justify-between border-b border-border bg-background px-4 py-3 md:hidden">
         <Brand className="text-3xl" />
@@ -54,7 +55,7 @@ export function AppShell({
           "absolute inset-y-0 left-0 z-50 flex w-72 max-w-[85%] flex-col overflow-y-auto border-border bg-background transition-transform duration-200 ease-out",
           open ? "translate-x-0" : "-translate-x-full",
           // Desktop: static sidebar in normal flow
-          "md:static md:z-auto md:w-56 md:max-w-none md:translate-x-0 md:shrink-0 md:border-r md:transition-none",
+          "md:static md:z-auto md:w-56 md:max-w-none md:translate-x-0 md:shrink-0 md:bg-transparent md:transition-none",
         )}
       >
         {/* Mobile drawer header */}
@@ -78,7 +79,7 @@ export function AppShell({
             <Link
               href="/settings"
               onClick={() => setOpen(false)}
-              className="flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+              className="flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium text-muted-foreground transition-colors hover:bg-white/70 hover:text-foreground"
             >
               <SettingsIcon className="h-4 w-4 shrink-0" />
               {t("nav.settings")}
@@ -115,9 +116,10 @@ export function AppShell({
       </aside>
 
       {/* Main content — the only part that scrolls on desktop */}
-      <main className="min-w-0 flex-1 px-4 py-6 md:h-screen md:overflow-y-auto md:px-8">
+      <main className="min-w-0 flex-1 px-4 py-6 md:h-full md:overflow-y-auto md:bg-transparent md:px-8">
         {children}
       </main>
+      </div>
     </div>
   );
 }

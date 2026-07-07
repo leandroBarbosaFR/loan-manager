@@ -56,7 +56,7 @@ export default async function LandingPage() {
 function DashboardPreview({ labels }: { labels: { stats: string[] } }) {
   const values = ["R$ 48.200", "R$ 31.750", "R$ 16.450"];
   return (
-    <div className="rounded-xl border border-border bg-white p-5 shadow-md">
+    <div className="rounded-xl bg-white p-5 shadow-md">
       <div className="mb-4 flex items-center gap-1.5">
         <span className="h-2.5 w-2.5 rounded-full bg-muted" />
         <span className="h-2.5 w-2.5 rounded-full bg-muted" />
@@ -65,7 +65,7 @@ function DashboardPreview({ labels }: { labels: { stats: string[] } }) {
 
       <div className="grid grid-cols-3 gap-3">
         {labels.stats.map((label, i) => (
-          <div key={label} className="rounded-lg border border-border p-3">
+          <div key={label} className="rounded-lg p-3">
             <p className="truncate text-[10px] font-medium uppercase tracking-wide text-muted-foreground">
               {label}
             </p>

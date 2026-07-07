@@ -34,7 +34,7 @@ export function RenegotiateForm({
       <FormError message={state?.error} />
 
       <div className="mb-4 grid grid-cols-1 gap-4 sm:grid-cols-2">
-        <div className="rounded-lg border border-border bg-white p-4 shadow-sm">
+        <div className="rounded-lg bg-white p-4 shadow-sm">
           <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
             {t("renegotiate.currentBalance")}
           </p>
@@ -42,7 +42,7 @@ export function RenegotiateForm({
             {formatMoney(outstanding)}
           </p>
         </div>
-        <div className="rounded-lg border border-border bg-white p-4 shadow-sm">
+        <div className="rounded-lg bg-white p-4 shadow-sm">
           <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
             {t("renegotiate.lateCharges")}
           </p>
