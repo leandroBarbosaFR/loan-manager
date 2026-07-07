@@ -40,7 +40,9 @@ export default async function UsersPage() {
             <TableRow>
               <TableHead>{t("users.colEmail")}</TableHead>
               <TableHead>{t("users.colRole")}</TableHead>
-              <TableHead>{t("users.colCreated")}</TableHead>
+              <TableHead className="hidden sm:table-cell">
+                {t("users.colCreated")}
+              </TableHead>
               <TableHead />
             </TableRow>
           </TableHeader>
@@ -62,7 +64,7 @@ export default async function UsersPage() {
                       ? t("users.roleSuperAdmin")
                       : t("users.roleUser")}
                   </TableCell>
-                  <TableCell className="text-muted-foreground">
+                  <TableCell className="hidden text-muted-foreground sm:table-cell">
                     {formatDate(p.created_at)}
                   </TableCell>
                   <TableCell className="text-right">

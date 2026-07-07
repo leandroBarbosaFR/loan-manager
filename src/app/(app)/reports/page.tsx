@@ -42,7 +42,7 @@ function LoanReportTable({ rows, t }: { rows: LoanReportRow[]; t: Translator }) 
         {rows.map((r, i) => (
           <div
             key={i}
-            className="rounded-lg bg-white p-4 shadow-xs"
+            className="rounded-lg bg-surface p-4 shadow-xs"
           >
             <div className="flex items-start justify-between gap-3">
               <span className="font-medium">{r.customer}</span>
@@ -203,7 +203,7 @@ export default async function ReportsPage() {
             {collections.map((r) => (
               <div
                 key={r.month}
-                className="flex items-center justify-between gap-3 rounded-lg bg-white p-4 text-sm shadow-xs"
+                className="flex items-center justify-between gap-3 rounded-lg bg-surface p-4 text-sm shadow-xs"
               >
                 <span className="font-medium">{r.month}</span>
                 <div className="text-right">

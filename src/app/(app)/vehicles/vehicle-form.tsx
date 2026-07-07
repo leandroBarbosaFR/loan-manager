@@ -70,7 +70,7 @@ export function VehicleForm({
 
       <fieldset
         data-tour="vf-specs"
-        className="mb-4 rounded-lg bg-white p-4 shadow-sm"
+        className="mb-4 rounded-lg bg-surface p-4 shadow-sm"
       >
         <legend className="px-1 text-xs font-medium uppercase tracking-wide text-muted-foreground">
           {t("vehicleForm.specs")}
@@ -111,7 +111,7 @@ export function VehicleForm({
 
       <fieldset
         data-tour="vf-features"
-        className="mb-4 rounded-lg bg-white p-4 shadow-sm"
+        className="mb-4 rounded-lg bg-surface p-4 shadow-sm"
       >
         <legend className="px-1 text-xs font-medium uppercase tracking-wide text-muted-foreground">
           {t("vehicleForm.features")}
@@ -133,7 +133,7 @@ export function VehicleForm({
 
       <fieldset
         data-tour="vf-docs"
-        className="mb-4 rounded-lg bg-white p-4 shadow-sm"
+        className="mb-4 rounded-lg bg-surface p-4 shadow-sm"
       >
         <legend className="px-1 text-xs font-medium uppercase tracking-wide text-muted-foreground">
           {t("vehicleForm.documentation")}

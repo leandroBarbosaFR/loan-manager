@@ -40,7 +40,7 @@ export default async function TermsPage() {
               ? "A Lendly é uma plataforma desenvolvida e mantida pela 1367 Studio. Para fins destes Termos de Uso e da Política de Privacidade, a 1367 Studio poderá ser identificada pelos seguintes dados:"
               : "Lendly is a platform developed and maintained by 1367 Studio. For the purposes of these Terms of Use and the Privacy Policy, 1367 Studio may be identified by the following details:"}
           </p>
-          <dl className="rounded-lg bg-white p-4 text-sm shadow-sm">
+          <dl className="rounded-lg bg-surface p-4 text-sm shadow-sm">
             <Row
               label={pt ? "Razão social" : "Legal name"}
               value={pt ? "[inserir razão social]" : "[insert legal name]"}

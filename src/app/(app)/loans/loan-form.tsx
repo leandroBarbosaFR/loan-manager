@@ -235,7 +235,7 @@ export function LoanForm({
         />
       </FormField>
 
-      <fieldset className="mb-4 rounded-lg bg-white p-4 shadow-sm">
+      <fieldset className="mb-4 rounded-lg bg-surface p-4 shadow-sm">
         <legend className="px-1 text-xs font-medium uppercase tracking-wide text-muted-foreground">
           {t("loanForm.lateSection")}
         </legend>
@@ -287,7 +287,7 @@ export function LoanForm({
       </FormField>
 
       {allowInstallments ? (
-        <div className="mb-4 rounded-lg bg-white p-4 shadow-sm">
+        <div className="mb-4 rounded-lg bg-surface p-4 shadow-sm">
           <label className="flex items-center gap-2 text-sm font-medium">
             <input
               type="checkbox"
@@ -340,7 +340,7 @@ export function LoanForm({
       {allowInstallments && !rollover ? (
         <div
           data-tour="lf-installments"
-          className="mb-4 rounded-lg bg-white p-4 shadow-sm"
+          className="mb-4 rounded-lg bg-surface p-4 shadow-sm"
         >
           <label className="flex items-center gap-2 text-sm font-medium">
             <input

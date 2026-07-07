@@ -71,7 +71,7 @@ function DueBucket({
       : "text-foreground";
 
   return (
-    <div className="rounded-lg bg-white p-4 shadow-sm">
+    <div className="rounded-lg bg-surface p-4 shadow-sm">
       <div className="flex items-center justify-between">
         <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
           {t(bucket.label)}
@@ -154,11 +154,11 @@ export default async function DashboardPage() {
         }
       />
 
-      <div className="rounded-xl bg-white p-6 shadow-sm">
+      <div className="rounded-xl bg-surface p-6 shadow-sm">
         <p className="text-sm font-medium text-muted-foreground">
           {t("dashboard.overview")}
         </p>
-        <div className="mt-4 grid grid-cols-2 gap-x-6 gap-y-6 lg:grid-cols-4">
+        <div className="mt-4 grid grid-cols-1 gap-x-6 gap-y-6 sm:grid-cols-2 lg:grid-cols-4">
           <Metric
             label={t("dashboard.principalLent")}
             value={formatMoney(stats.totalPrincipal)}

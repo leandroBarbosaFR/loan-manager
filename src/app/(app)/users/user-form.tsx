@@ -44,7 +44,7 @@ export function UserForm() {
         </FormField>
       </div>
 
-      <fieldset className="mb-4 rounded-lg bg-white p-4 shadow-sm">
+      <fieldset className="mb-4 rounded-lg bg-surface p-4 shadow-sm">
         <legend className="px-1 text-xs font-medium uppercase tracking-wide text-muted-foreground">
           {t("users.address")}
         </legend>

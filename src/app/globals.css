@@ -3,13 +3,13 @@
 @tailwind utilities;
 
 :root {
-  color-scheme: light;
+  color-scheme: dark;
 }
 
 html,
 body {
-  background-color: #f7f8fa;
-  color: #0a0a0b;
+  background-color: #0b0c10;
+  color: #e8e9ee;
 }
 
 body {
@@ -20,7 +20,7 @@ body {
 
 @layer base {
   * {
-    border-color: #e6e7eb;
+    border-color: #262832;
   }
 }
 
@@ -34,26 +34,43 @@ input[type="number"] {
   -moz-appearance: textfield;
 }
 
-/* driver.js onboarding tour — themed to match the app (indigo). */
+/* Native <select> controls: strip the OS control chrome so our dark
+   background applies (otherwise macOS paints a light-grey native control),
+   and force the dropdown option list onto the dark surface. */
+select {
+  -webkit-appearance: none;
+  appearance: none;
+}
+select option,
+select optgroup {
+  background-color: #161821;
+  color: #e8e9ee;
+}
+
+/* driver.js onboarding tour — themed to match the app (dark + violet). */
 .driver-popover.lendly-tour {
+  background: #161821;
   border-radius: 0.75rem;
-  box-shadow: 0 12px 32px -12px rgb(16 24 40 / 0.28);
+  box-shadow: 0 16px 40px -12px rgb(0 0 0 / 0.6);
   padding: 1rem 1.25rem;
+}
+.driver-popover.lendly-tour .driver-popover-arrow {
+  color: #161821;
 }
 .driver-popover.lendly-tour .driver-popover-title {
   font-size: 1rem;
   font-weight: 600;
-  color: #0a0a0b;
+  color: #e8e9ee;
 }
 .driver-popover.lendly-tour .driver-popover-description {
-  color: #374151;
+  color: #c3c6d1;
   font-size: 0.875rem;
 }
 .driver-popover.lendly-tour .driver-popover-progress-text {
-  color: #6b7280;
+  color: #9599a6;
 }
 .driver-popover.lendly-tour button.driver-popover-next-btn {
-  background: #4f46e5;
+  background: #7c5cff;
   color: #fff;
   text-shadow: none;
   border: none;
@@ -62,16 +79,16 @@ input[type="number"] {
   font-weight: 500;
 }
 .driver-popover.lendly-tour button.driver-popover-next-btn:hover {
-  background: #4338ca;
+  background: #6b49f0;
 }
 .driver-popover.lendly-tour button.driver-popover-prev-btn {
   text-shadow: none;
-  border: 1px solid #e6e7eb;
+  border: 1px solid #262832;
   border-radius: 0.5rem;
-  background: #fff;
-  color: #374151;
+  background: #1e2029;
+  color: #c3c6d1;
   font-weight: 500;
 }
 .driver-popover.lendly-tour .driver-popover-close-btn {
-  color: #9ca3af;
+  color: #9599a6;
 }

@@ -52,7 +52,7 @@ function Toast({ item, onClose }: { item: ToastItem; onClose: () => void }) {
   return (
     <div
       role="status"
-      className="pointer-events-auto flex items-start gap-3 rounded-lg bg-white px-4 py-3 text-sm shadow-md"
+      className="pointer-events-auto flex items-start gap-3 rounded-lg bg-surface px-4 py-3 text-sm shadow-md"
     >
       <span
         className={cn(

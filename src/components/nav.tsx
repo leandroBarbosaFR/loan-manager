@@ -61,9 +61,9 @@ export function Nav({
             onClick={onNavigate}
             aria-current={active ? "page" : undefined}
             className={cn(
-              "flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium text-muted-foreground transition-colors hover:bg-white/70 hover:text-foreground",
+              "flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium text-muted-foreground transition-colors hover:bg-surface/70 hover:text-foreground",
               active &&
-                "bg-white text-foreground shadow-sm hover:bg-white",
+                "bg-surface text-foreground shadow-sm hover:bg-surface",
             )}
           >
             <link.Icon

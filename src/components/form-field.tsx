@@ -35,7 +35,7 @@ export function FormField({
 export function FormError({ message }: { message?: string }) {
   if (!message) return null;
   return (
-    <div className="mb-4 border border-destructive bg-white px-3 py-2 text-sm text-destructive">
+    <div className="mb-4 border border-destructive bg-surface px-3 py-2 text-sm text-destructive">
       {message}
     </div>
   );

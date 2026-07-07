@@ -5,7 +5,7 @@ import { Brand } from "@/components/brand";
 export function LegalShell({ children }: { children: React.ReactNode }) {
   return (
     <div className="flex min-h-screen flex-col bg-canvas">
-      <header className="flex items-center border-b border-border bg-white px-6 py-4">
+      <header className="flex items-center border-b border-border bg-surface px-6 py-4">
         <Link href="/">
           <Brand className="text-2xl" />
         </Link>

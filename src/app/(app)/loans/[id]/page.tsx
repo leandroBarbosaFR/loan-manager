@@ -76,23 +76,14 @@ export default async function LoanDetailPage({
     );
 
   return (
-    <div>
+    <div className="md:pt-6">
       <BackButton fallbackHref="/loans" />
       <PageHeader
         title={loan.customer?.name ?? t("loanDetail.loanTitle")}
         description={t("loanDetail.issued", { date: formatDate(loan.loan_date) })}
-        action={
-          <div className="flex items-center gap-2">
+        badge={
+          <div className="flex flex-wrap items-center gap-2">
             <StatusBadge status={loan.status} />
-            {canRollOver ? (
-              <RolloverButton
-                action={rollOverAction}
-                label={t("loanDetail.rolloverButton")}
-                confirmMessage={t("loanDetail.rolloverConfirm", {
-                  fee: formatMoney(loan.rollover_fee ?? 0),
-                })}
-              />
-            ) : null}
             {canSettle ? (
               <SettleLoanButton
                 action={settleAction}
@@ -100,6 +91,19 @@ export default async function LoanDetailPage({
                 label={t("loanDetail.settleButton")}
                 confirmMessage={t("loanDetail.settleConfirm", {
                   amount: formatMoney(settleAmount),
+                })}
+              />
+            ) : null}
+          </div>
+        }
+        action={
+          <div className="flex items-center gap-2">
+            {canRollOver ? (
+              <RolloverButton
+                action={rollOverAction}
+                label={t("loanDetail.rolloverButton")}
+                confirmMessage={t("loanDetail.rolloverConfirm", {
+                  fee: formatMoney(loan.rollover_fee ?? 0),
                 })}
               />
             ) : null}
@@ -183,7 +187,7 @@ export default async function LoanDetailPage({
           </>
         ) : null}
         {loan.customer ? (
-          <div className="rounded-lg bg-white p-5 shadow-sm">
+          <div className="rounded-lg bg-surface p-5 shadow-sm">
             <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
               {t("common.customer")}
             </p>
@@ -198,7 +202,7 @@ export default async function LoanDetailPage({
       </StatGrid>
 
       {loan.notes ? (
-        <div className="mt-6 rounded-lg bg-white p-4 text-sm shadow-sm">
+        <div className="mt-6 rounded-lg bg-surface p-4 text-sm shadow-sm">
           <p className="mb-1 text-xs uppercase tracking-wide text-muted-foreground">
             {t("loanDetail.notes")}
           </p>
@@ -228,7 +232,9 @@ export default async function LoanDetailPage({
               <TableHead className="hidden md:table-cell">
                 {t("loanDetail.colPaidOn")}
               </TableHead>
-              <TableHead>{t("common.status")}</TableHead>
+              <TableHead className="hidden sm:table-cell">
+                {t("common.status")}
+              </TableHead>
               <TableHead />
             </TableRow>
           </TableHeader>
@@ -264,7 +270,7 @@ export default async function LoanDetailPage({
                 <TableCell className="hidden md:table-cell">
                   {formatDate(inst.paid_at)}
                 </TableCell>
-                <TableCell>
+                <TableCell className="hidden sm:table-cell">
                   <StatusBadge status={effectiveInstallmentStatus(inst)} />
                 </TableCell>
                 <TableCell>

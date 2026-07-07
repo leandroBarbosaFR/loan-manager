@@ -116,7 +116,7 @@ export default async function LoansPage({
               <Link
                 key={loan.id}
                 href={`/loans/${loan.id}`}
-                className="block rounded-lg bg-white p-4 shadow-xs transition-colors hover:bg-muted/50"
+                className="block rounded-lg bg-surface p-4 shadow-xs transition-colors hover:bg-muted/50"
               >
                 <div className="flex items-start justify-between gap-3">
                   <span className="font-medium">{loan.customer?.name ?? "—"}</span>
@@ -186,9 +186,9 @@ export default async function LoansPage({
               const overdue = nextDue != null && nextDue < todayStr;
               const rowClass =
                 loan.status === "paid"
-                  ? "bg-green-50"
+                  ? "bg-success/10"
                   : loan.status === "overdue"
-                    ? "bg-red-50"
+                    ? "bg-destructive/10"
                     : undefined;
               return (
                 <TableRow key={loan.id} className={rowClass}>

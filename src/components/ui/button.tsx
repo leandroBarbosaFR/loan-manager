@@ -10,7 +10,7 @@ const buttonVariants = cva(
         default:
           "border-transparent bg-primary text-primary-foreground shadow-sm hover:bg-primary-hover",
         outline:
-          "border-border bg-white text-foreground shadow-xs hover:bg-muted hover:border-muted-foreground/30",
+          "border-border bg-surface text-foreground shadow-xs hover:bg-muted hover:border-muted-foreground/30",
         destructive:
           "border-transparent bg-destructive text-white shadow-sm hover:opacity-90",
         ghost:

@@ -10,7 +10,7 @@ export default async function LandingPage() {
 
   return (
     <div className="flex min-h-screen flex-col bg-canvas">
-      <header className="flex items-center justify-between border-b border-border bg-white px-6 py-4">
+      <header className="flex items-center justify-between border-b border-border bg-surface px-6 py-4">
         <Brand className="text-3xl" />
         <Link href="/login">
           <Button variant="outline">{t("landing.login")}</Button>
@@ -56,7 +56,7 @@ export default async function LandingPage() {
 function DashboardPreview({ labels }: { labels: { stats: string[] } }) {
   const values = ["R$ 48.200", "R$ 31.750", "R$ 16.450"];
   return (
-    <div className="rounded-xl bg-white p-5 shadow-md">
+    <div className="rounded-xl bg-surface p-5 shadow-md">
       <div className="mb-4 flex items-center gap-1.5">
         <span className="h-2.5 w-2.5 rounded-full bg-muted" />
         <span className="h-2.5 w-2.5 rounded-full bg-muted" />

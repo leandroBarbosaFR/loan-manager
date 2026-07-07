@@ -45,7 +45,7 @@ function PageLink({
     "rounded-md border border-border px-3 py-1.5 shadow-xs transition-colors",
     className,
     href
-      ? "bg-white text-foreground hover:bg-muted"
+      ? "bg-surface text-foreground hover:bg-muted"
       : "cursor-not-allowed bg-muted text-muted-foreground",
   );
   if (!href) {

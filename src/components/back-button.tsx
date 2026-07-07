@@ -20,7 +20,7 @@ export function BackButton({ fallbackHref = "/" }: { fallbackHref?: string }) {
         if (window.history.length > 1) router.back();
         else router.push(fallbackHref);
       }}
-      className="mb-4 inline-flex h-9 items-center gap-1.5 rounded-md border border-border bg-white px-3 text-sm font-medium text-foreground shadow-xs transition-colors hover:bg-muted"
+      className="mb-4 inline-flex h-9 items-center gap-1.5 rounded-md border border-border bg-surface px-3 text-sm font-medium text-foreground shadow-xs transition-colors hover:bg-muted"
     >
       <ArrowLeft className="h-4 w-4" aria-hidden="true" />
       {t("common.back")}

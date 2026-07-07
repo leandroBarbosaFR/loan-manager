@@ -51,7 +51,7 @@ export function FeatureTour({ id }: { id: TourId }) {
       type="button"
       onClick={run}
       aria-label={t("tour.help")}
-      className="inline-flex h-9 items-center gap-1.5 rounded-md border border-border bg-white px-3 text-sm font-medium text-muted-foreground shadow-xs transition-colors hover:bg-muted hover:text-foreground"
+      className="inline-flex h-9 items-center gap-1.5 rounded-md border border-border bg-surface px-3 text-sm font-medium text-muted-foreground shadow-xs transition-colors hover:bg-muted hover:text-foreground"
     >
       <span aria-hidden="true" className="text-base leading-none">
         ?

@@ -48,29 +48,26 @@ export default async function InstallmentsPage({
 
   return (
     <div>
-      <PageHeader
-        title={t("installments.title")}
-        // description={t("installments.description")}
-      />
-
-      <FilterTabs
-        basePath="/installments"
-        active={filter}
-        options={[
-          { value: "all", label: t("installments.filterAll"), count: counts.all },
-          {
-            value: "pending",
-            label: t("installments.filterPending"),
-            count: counts.pending,
-          },
-          { value: "paid", label: t("installments.filterPaid"), count: counts.paid },
-          {
-            value: "overdue",
-            label: t("installments.filterOverdue"),
-            count: counts.overdue,
-          },
-        ]}
-      />
+      <PageHeader title={t("installments.title")}>
+        <FilterTabs
+          basePath="/installments"
+          active={filter}
+          options={[
+            { value: "all", label: t("installments.filterAll"), count: counts.all },
+            {
+              value: "pending",
+              label: t("installments.filterPending"),
+              count: counts.pending,
+            },
+            { value: "paid", label: t("installments.filterPaid"), count: counts.paid },
+            {
+              value: "overdue",
+              label: t("installments.filterOverdue"),
+              count: counts.overdue,
+            },
+          ]}
+        />
+      </PageHeader>
 
       {rows.length === 0 ? (
         <EmptyState title={t("installments.empty")} />
@@ -81,7 +78,7 @@ export default async function InstallmentsPage({
           {rows.map((inst) => (
             <div
               key={inst.id}
-              className="rounded-lg bg-white p-4 shadow-xs"
+              className="rounded-lg bg-surface p-4 shadow-xs"
             >
               <div className="flex items-start justify-between gap-3">
                 <span className="font-medium">

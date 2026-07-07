@@ -95,7 +95,7 @@ export default async function VehicleDetailPage({
       />
 
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
-        <div className="rounded-lg bg-white p-4 text-sm shadow-sm">
+        <div className="rounded-lg bg-surface p-4 text-sm shadow-sm">
           <p className="mb-2 text-xs font-medium uppercase tracking-wide text-muted-foreground">
             {t("vehicleDetail.specs")}
           </p>
@@ -109,7 +109,7 @@ export default async function VehicleDetailPage({
           </dl>
         </div>
 
-        <div className="rounded-lg bg-white p-4 text-sm shadow-sm">
+        <div className="rounded-lg bg-surface p-4 text-sm shadow-sm">
           <p className="mb-2 text-xs font-medium uppercase tracking-wide text-muted-foreground">
             {t("vehicleDetail.features")}
           </p>
@@ -129,7 +129,7 @@ export default async function VehicleDetailPage({
           </dl>
         </div>
 
-        <div className="rounded-lg bg-white p-4 text-sm shadow-sm">
+        <div className="rounded-lg bg-surface p-4 text-sm shadow-sm">
           <p className="mb-2 text-xs font-medium uppercase tracking-wide text-muted-foreground">
             {t("vehicleDetail.documentation")}
           </p>
@@ -159,7 +159,7 @@ export default async function VehicleDetailPage({
       </div>
 
       {vehicle.notes ? (
-        <div className="mt-4 rounded-lg bg-white p-4 text-sm shadow-sm">
+        <div className="mt-4 rounded-lg bg-surface p-4 text-sm shadow-sm">
           <p className="mb-1 text-xs uppercase tracking-wide text-muted-foreground">
             {t("vehicleForm.notes")}
           </p>

@@ -101,7 +101,7 @@ export function WhatsappForm({ settings }: { settings: WhatsappSettings | null }
       </div>
 
       {sections.map((s) => (
-        <fieldset key={s.templateName} className="mb-4 rounded-lg bg-white p-4 shadow-sm">
+        <fieldset key={s.templateName} className="mb-4 rounded-lg bg-surface p-4 shadow-sm">
           <legend className="px-1 text-xs font-medium uppercase tracking-wide text-muted-foreground">
             {s.title}
           </legend>

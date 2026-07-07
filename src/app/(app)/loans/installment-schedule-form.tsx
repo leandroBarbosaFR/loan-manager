@@ -67,7 +67,7 @@ export function InstallmentScheduleForm({
 
       <input type="hidden" name="schedule_json" value={JSON.stringify(schedule)} />
 
-      <div className="overflow-hidden rounded-lg bg-white shadow-sm">
+      <div className="overflow-hidden rounded-lg bg-surface shadow-sm">
         <table className="w-full text-sm">
           <thead>
             <tr className="border-b border-border text-left text-muted-foreground">

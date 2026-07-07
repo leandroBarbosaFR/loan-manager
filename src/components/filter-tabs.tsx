@@ -13,7 +13,7 @@ export function FilterTabs({
   options: { value: string; label: string; count?: number }[];
 }) {
   return (
-    <div className="mb-4 inline-flex flex-wrap gap-1 rounded-lg bg-white p-1 shadow-xs">
+    <div className="mb-4 inline-flex flex-wrap gap-1 rounded-lg bg-surface p-1 shadow-xs">
       {options.map((opt) => {
         const href =
           opt.value === "all" ? basePath : `${basePath}?${param}=${opt.value}`;

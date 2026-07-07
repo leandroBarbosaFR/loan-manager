@@ -135,7 +135,7 @@ export function Calculator() {
   }, [inputDigit, chooseOperator, percent, equals, backspace, reset]);
 
   return (
-    <div className="max-w-xs overflow-hidden rounded-xl bg-white shadow-sm">
+    <div className="max-w-xs overflow-hidden rounded-xl bg-surface shadow-sm">
       <div className="flex min-h-[6rem] flex-col items-end justify-end gap-1 bg-muted/40 px-5 py-4">
         <span className="h-4 text-xs text-muted-foreground tabular-nums">
           {previous !== null && operator
@@ -198,7 +198,7 @@ function Key({
           ? "bg-primary text-primary-foreground hover:bg-primary-hover"
           : variant === "muted"
             ? "bg-muted text-muted-foreground hover:bg-accent hover:text-accent-foreground"
-            : "border border-border bg-white text-foreground hover:bg-muted",
+            : "border border-border bg-surface text-foreground hover:bg-muted",
         active && "ring-2 ring-ring ring-offset-1",
       )}
     >
