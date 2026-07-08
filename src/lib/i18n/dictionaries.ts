@@ -382,6 +382,8 @@ const en = {
   "payment.undo": "Undo payment",
   "payment.paidOn": "Paid on",
   "payment.remaining": "Remaining",
+  "payment.amountHelp":
+    "How much did they pay? Keep the full amount, or change it for a partial payment.",
   "payment.note": "Note (optional)",
   "payment.history": "Payments",
   "payment.noPayments": "No payments recorded yet.",
@@ -886,6 +888,8 @@ const ptBR: Messages = {
   "payment.undo": "Desfazer pagamento",
   "payment.paidOn": "Pago em",
   "payment.remaining": "Restante",
+  "payment.amountHelp":
+    "Quanto ele pagou? Mantenha o valor total ou altere para registrar um pagamento parcial.",
   "payment.note": "Observação (opcional)",
   "payment.history": "Pagamentos",
   "payment.noPayments": "Nenhum pagamento registrado ainda.",

@@ -3,6 +3,7 @@
 import { useActionState, useEffect, useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { Modal } from "@/components/ui/modal";
 import { SubmitButton } from "@/components/submit-button";
 import { useActionToast } from "@/components/toast";
 import {
@@ -50,84 +51,91 @@ export function PaymentControl({ installment }: { installment: Installment }) {
     );
   }
 
-  if (!open) {
-    return (
-      <div className="flex items-center justify-end gap-2">
-        {isPartial ? (
-          <span className="text-xs text-muted-foreground tabular-nums">
-            {formatMoney(paidSoFar)} / {formatMoney(installment.amount)}
-          </span>
-        ) : null}
-        <Button size="sm" onClick={() => setOpen(true)}>
-          {isPartial ? t("payment.payRemaining") : t("payment.markPaid")}
-        </Button>
-        {isPartial ? (
-          <ClearButton
-            installmentId={installment.id}
-            loanId={installment.loan_id}
-            label={t("payment.undo")}
-          />
-        ) : null}
-      </div>
-    );
-  }
+  const title = isPartial ? t("payment.payRemaining") : t("payment.markPaid");
 
   return (
-    <form
-      action={formAction}
-      className="flex flex-col gap-2 sm:flex-row sm:items-end"
-    >
-      <div>
-        <label className="mb-1 block text-xs text-muted-foreground">
-          {t("common.amount")}
-          {isPartial ? (
-            <span className="ml-1 tabular-nums">
-              ({t("payment.remaining")} {formatMoney(remaining)})
-            </span>
-          ) : null}
-        </label>
-        <Input
-          name="paid_amount"
-          type="number"
-          step="0.01"
-          min="0.01"
-          max={installment.amount}
-          inputMode="decimal"
-          defaultValue={remaining}
-          className="h-8 w-28"
-          required
+    <div className="flex items-center justify-end gap-2">
+      {isPartial ? (
+        <span className="text-xs text-muted-foreground tabular-nums">
+          {formatMoney(paidSoFar)} / {formatMoney(installment.amount)}
+        </span>
+      ) : null}
+      <Button size="sm" onClick={() => setOpen(true)}>
+        {title}
+      </Button>
+      {isPartial ? (
+        <ClearButton
+          installmentId={installment.id}
+          loanId={installment.loan_id}
+          label={t("payment.undo")}
         />
-      </div>
-      <div>
-        <label className="mb-1 block text-xs text-muted-foreground">
-          {t("payment.paidOn")}
-        </label>
-        <Input
-          name="paid_at"
-          type="date"
-          defaultValue={today()}
-          className="h-8 w-40"
-          required
-        />
-      </div>
-      <div>
-        <label className="mb-1 block text-xs text-muted-foreground">
-          {t("payment.note")}
-        </label>
-        <Input name="note" className="h-8 w-40" />
-      </div>
-      <div className="flex gap-2">
-        <SubmitButton size="sm">{t("common.save")}</SubmitButton>
-        <Button
-          type="button"
-          variant="ghost"
-          size="sm"
-          onClick={() => setOpen(false)}
-        >
-          {t("common.cancel")}
-        </Button>
-      </div>
-    </form>
+      ) : null}
+
+      <Modal open={open} onClose={() => setOpen(false)} title={title}>
+        <form action={formAction} className="flex flex-col gap-4">
+          <div>
+            <label
+              htmlFor={`paid_amount_${installment.id}`}
+              className="mb-1 block text-sm font-medium"
+            >
+              {t("common.amount")}
+              <span className="ml-1 text-xs font-normal text-muted-foreground tabular-nums">
+                ({t("payment.remaining")} {formatMoney(remaining)})
+              </span>
+            </label>
+            <Input
+              id={`paid_amount_${installment.id}`}
+              name="paid_amount"
+              type="number"
+              step="0.01"
+              min="0.01"
+              max={installment.amount}
+              inputMode="decimal"
+              defaultValue={remaining}
+              autoFocus
+              required
+            />
+            <p className="mt-1 text-xs text-muted-foreground">
+              {t("payment.amountHelp")}
+            </p>
+          </div>
+          <div>
+            <label
+              htmlFor={`paid_at_${installment.id}`}
+              className="mb-1 block text-sm font-medium"
+            >
+              {t("payment.paidOn")}
+            </label>
+            <Input
+              id={`paid_at_${installment.id}`}
+              name="paid_at"
+              type="date"
+              defaultValue={today()}
+              required
+            />
+          </div>
+          <div>
+            <label
+              htmlFor={`note_${installment.id}`}
+              className="mb-1 block text-sm font-medium"
+            >
+              {t("payment.note")}
+            </label>
+            <Input id={`note_${installment.id}`} name="note" />
+          </div>
+          <div className="mt-1 flex justify-end gap-2">
+            <Button
+              type="button"
+              variant="ghost"
+              onClick={() => setOpen(false)}
+            >
+              {t("common.cancel")}
+            </Button>
+            <SubmitButton>{t("common.save")}</SubmitButton>
+          </div>
+        </form>
+      </Modal>
+    </div>
   );
 }
 
