@@ -15,6 +15,7 @@ import {
   WhatsappIcon,
   UsersIcon,
   VehiclesIcon,
+  CapitalIcon,
   type IconProps,
 } from "@/components/nav-icons";
 
@@ -26,6 +27,7 @@ const LINKS: NavLink[] = [
   { href: "/loans", key: "nav.loans", Icon: LoansIcon },
   { href: "/vehicles", key: "nav.vehicles", Icon: VehiclesIcon },
   { href: "/installments", key: "nav.installments", Icon: InstallmentsIcon },
+  { href: "/capital", key: "nav.capital", Icon: CapitalIcon },
   { href: "/reports", key: "nav.reports", Icon: ReportsIcon },
   { href: "/calculator", key: "nav.calculator", Icon: CalculatorIcon },
   { href: "/whatsapp", key: "nav.whatsapp", Icon: WhatsappIcon },

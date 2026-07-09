@@ -106,10 +106,68 @@ function DueBucket({
   );
 }
 
-export default async function DashboardPage() {
+const DATE_RE = /^\d{4}-\d{2}-\d{2}$/;
+
+function PeriodFilter({
+  from,
+  to,
+  t,
+}: {
+  from?: string;
+  to?: string;
+  t: Translator;
+}) {
+  const active = Boolean(from || to);
+  const inputClass =
+    "rounded-md border border-border bg-background px-2.5 py-1.5 text-sm tabular-nums text-foreground";
+  return (
+    <form
+      method="get"
+      className="flex flex-wrap items-end gap-x-3 gap-y-2 text-sm"
+    >
+      <label className="flex flex-col gap-1">
+        <span className="text-xs font-medium text-muted-foreground">
+          {t("dashboard.periodFrom")}
+        </span>
+        <input type="date" name="from" defaultValue={from} className={inputClass} />
+      </label>
+      <label className="flex flex-col gap-1">
+        <span className="text-xs font-medium text-muted-foreground">
+          {t("dashboard.periodTo")}
+        </span>
+        <input type="date" name="to" defaultValue={to} className={inputClass} />
+      </label>
+      <Button type="submit" variant="outline">
+        {t("dashboard.periodApply")}
+      </Button>
+      {active ? (
+        <Link
+          href="/dashboard"
+          className="px-1 py-1.5 text-sm text-muted-foreground underline-offset-2 hover:underline"
+        >
+          {t("dashboard.periodClear")}
+        </Link>
+      ) : (
+        <span className="py-1.5 text-xs text-muted-foreground">
+          {t("dashboard.periodAll")}
+        </span>
+      )}
+    </form>
+  );
+}
+
+export default async function DashboardPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ from?: string; to?: string }>;
+}) {
   await refreshOverdueStatuses();
+  const { from: fromRaw, to: toRaw } = await searchParams;
+  const from = fromRaw && DATE_RE.test(fromRaw) ? fromRaw : undefined;
+  const to = toRaw && DATE_RE.test(toRaw) ? toRaw : undefined;
+
   const [stats, dueSoon, t] = await Promise.all([
-    getDashboardStats(),
+    getDashboardStats({ from, to }),
     listDueSoon(),
     getT(),
   ]);
@@ -155,9 +213,12 @@ export default async function DashboardPage() {
       />
 
       <div className="rounded-xl bg-surface p-6 shadow-sm">
-        <p className="text-sm font-medium text-muted-foreground">
-          {t("dashboard.overview")}
-        </p>
+        <div className="flex flex-wrap items-start justify-between gap-4">
+          <p className="text-sm font-medium text-muted-foreground">
+            {t("dashboard.overview")}
+          </p>
+          <PeriodFilter from={from} to={to} t={t} />
+        </div>
         <div className="mt-4 grid grid-cols-1 gap-x-6 gap-y-6 sm:grid-cols-2 lg:grid-cols-4">
           <Metric
             label={t("dashboard.principalLent")}

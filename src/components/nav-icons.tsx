@@ -11,6 +11,7 @@ import {
   UserGear,
   Car,
   Gear,
+  ArrowsClockwise,
 } from "@phosphor-icons/react";
 
 export type IconProps = { className?: string };
@@ -25,3 +26,4 @@ export const WhatsappIcon = (p: IconProps) => <WhatsappLogo {...p} />;
 export const UsersIcon = (p: IconProps) => <UserGear {...p} />;
 export const VehiclesIcon = (p: IconProps) => <Car {...p} />;
 export const SettingsIcon = (p: IconProps) => <Gear {...p} />;
+export const CapitalIcon = (p: IconProps) => <ArrowsClockwise {...p} />;
