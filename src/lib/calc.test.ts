@@ -287,8 +287,27 @@ describe("lateCharge", () => {
       outstanding: 1000,
       fee: 20,
       interest: 10,
+      daily: 0,
       total: 30,
     });
+  });
+
+  it("adds a fixed daily fee for each day late", () => {
+    // 30 days late, R$5/day = 150; plus fee 20 + interest 10 = 180
+    const lc = lateCharge(base, "2024-07-01", { ...config, dailyFee: 5 });
+    expect(lc.daysLate).toBe(30);
+    expect(lc.daily).toBe(150);
+    expect(lc.total).toBe(180);
+  });
+
+  it("daily fee alone (no percentages)", () => {
+    const lc = lateCharge(base, "2024-06-16", {
+      feePercent: 0,
+      interestPercentMonth: 0,
+      dailyFee: 10,
+    });
+    expect(lc.daysLate).toBe(15);
+    expect(lc.total).toBe(150);
   });
 
   it("interest is pro-rated by days late", () => {

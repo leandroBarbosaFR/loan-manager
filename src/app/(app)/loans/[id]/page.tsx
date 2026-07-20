@@ -55,6 +55,7 @@ export default async function LoanDetailPage({
   const lateConfig = {
     feePercent: loan.late_fee_percent ?? 0,
     interestPercentMonth: loan.late_interest_percent_month ?? 0,
+    dailyFee: loan.late_daily_fee ?? 0,
   };
   const lateTotal = totalLateCharges(loan.installments, asOf, lateConfig);
   const hasLate = lateTotal > 0;

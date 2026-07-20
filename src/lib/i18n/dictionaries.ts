@@ -316,6 +316,7 @@ const en = {
   "loanForm.lateHint": "Applied automatically to overdue installments. Leave at 0 for none.",
   "loanForm.lateFee": "Late fine % (one-time)",
   "loanForm.lateInterest": "Arrears interest % / month",
+  "loanForm.lateDaily": "Daily fee (R$ / day)",
   "loanForm.notes": "Notes",
   "loanForm.rollover": "Interest-only (rollover) loan",
   "loanForm.rolloverDescription":
@@ -863,6 +864,7 @@ const ptBR: Messages = {
   "loanForm.lateHint": "Aplicados automaticamente em parcelas atrasadas. Deixe 0 para nenhum.",
   "loanForm.lateFee": "Multa % (única)",
   "loanForm.lateInterest": "Juros de mora % / mês",
+  "loanForm.lateDaily": "Diária por atraso (R$ / dia)",
   "loanForm.notes": "Observações",
   "loanForm.rollover": "Empréstimo só de juros (rollover)",
   "loanForm.rolloverDescription":

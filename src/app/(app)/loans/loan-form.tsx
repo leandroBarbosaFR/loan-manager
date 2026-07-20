@@ -242,7 +242,7 @@ export function LoanForm({
         <p className="mb-3 text-xs text-muted-foreground">
           {t("loanForm.lateHint")}
         </p>
-        <div className="grid grid-cols-1 gap-x-4 sm:grid-cols-2">
+        <div className="grid grid-cols-1 gap-x-4 sm:grid-cols-3">
           <FormField
             label={t("loanForm.lateFee")}
             htmlFor="late_fee_percent"
@@ -273,6 +273,22 @@ export function LoanForm({
               inputMode="decimal"
               placeholder="1"
               defaultValue={loan?.late_interest_percent_month ?? ""}
+            />
+          </FormField>
+          <FormField
+            label={t("loanForm.lateDaily")}
+            htmlFor="late_daily_fee"
+            errors={state?.fieldErrors?.late_daily_fee}
+          >
+            <Input
+              id="late_daily_fee"
+              name="late_daily_fee"
+              type="number"
+              step="0.01"
+              min="0"
+              inputMode="decimal"
+              placeholder="10"
+              defaultValue={loan?.late_daily_fee ?? ""}
             />
           </FormField>
         </div>

@@ -155,6 +155,8 @@ export interface LateChargeConfig {
   feePercent: number;
   /** Monthly arrears interest (juros de mora), accrued pro-rata per day. */
   interestPercentMonth: number;
+  /** Fixed fee in currency charged for each day the installment is late. */
+  dailyFee?: number;
 }
 
 export interface LateCharge {
@@ -162,6 +164,8 @@ export interface LateCharge {
   outstanding: number;
   fee: number;
   interest: number;
+  /** Accumulated fixed daily fee: dailyFee × daysLate. */
+  daily: number;
   total: number;
 }
 
@@ -170,13 +174,15 @@ const NO_LATE_CHARGE: LateCharge = {
   outstanding: 0,
   fee: 0,
   interest: 0,
+  daily: 0,
   total: 0,
 };
 
 /**
  * Late penalty for a single installment as of `asOf` (YYYY-MM-DD).
  * Fine is one-time on the overdue balance; interest is simple, pro-rata per
- * day (monthly rate × daysLate/30). Zero when paid or not yet overdue.
+ * day (monthly rate × daysLate/30); the daily fee is a fixed amount per day
+ * late. Zero when paid or not yet overdue.
  */
 export function lateCharge(
   inst: Pick<Installment, "amount" | "due_date" | "paid_amount" | "paid_at">,
@@ -193,7 +199,15 @@ export function lateCharge(
   const interest = round2(
     outstanding * (config.interestPercentMonth / 100) * (daysLate / 30),
   );
-  return { daysLate, outstanding, fee, interest, total: round2(fee + interest) };
+  const daily = round2((config.dailyFee ?? 0) * daysLate);
+  return {
+    daysLate,
+    outstanding,
+    fee,
+    interest,
+    daily,
+    total: round2(fee + interest + daily),
+  };
 }
 
 /** Sum of late charges across a loan's installments as of `asOf`. */

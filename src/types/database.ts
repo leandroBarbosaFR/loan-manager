@@ -186,6 +186,8 @@ export type Loan = {
   late_fee_percent: number;
   /** Monthly arrears interest as a % (0 = none). */
   late_interest_percent_month: number;
+  /** Fixed fee (in currency) charged per day an installment is late (0 = none). */
+  late_daily_fee: number;
   /** Set when this loan was created by renegotiating an older one. */
   renegotiated_from_id: string | null;
   /** Set on the old loan when it was renegotiated into a newer one. */
@@ -255,6 +257,7 @@ export type Database = {
           rollover_fee?: number | null;
           late_fee_percent?: number;
           late_interest_percent_month?: number;
+          late_daily_fee?: number;
           renegotiated_from_id?: string | null;
           renegotiated_to_id?: string | null;
           renegotiated_at?: string | null;

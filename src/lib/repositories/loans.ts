@@ -83,6 +83,7 @@ export async function createLoan(input: LoanInput): Promise<Loan> {
       rollover_fee: rolloverFee,
       late_fee_percent: input.late_fee_percent,
       late_interest_percent_month: input.late_interest_percent_month,
+      late_daily_fee: input.late_daily_fee,
       status: "open",
     })
     .select("*")
@@ -151,6 +152,7 @@ export async function updateLoan(
     | "notes"
     | "late_fee_percent"
     | "late_interest_percent_month"
+    | "late_daily_fee"
   >,
 ): Promise<Loan> {
   const supabase = await createClient();
@@ -164,6 +166,7 @@ export async function updateLoan(
       notes: input.notes,
       late_fee_percent: input.late_fee_percent,
       late_interest_percent_month: input.late_interest_percent_month,
+      late_daily_fee: input.late_daily_fee,
     })
     .eq("id", id)
     .select("*")
@@ -297,6 +300,7 @@ export async function renegotiateLoan(
   const lateCfg = {
     feePercent: oldLoan.late_fee_percent ?? 0,
     interestPercentMonth: oldLoan.late_interest_percent_month ?? 0,
+    dailyFee: oldLoan.late_daily_fee ?? 0,
   };
   const lateTotal = totalLateCharges(rows, asOf, lateCfg);
   const outstanding = round2(
@@ -327,6 +331,7 @@ export async function renegotiateLoan(
       loan_date: asOf,
       late_fee_percent: oldLoan.late_fee_percent,
       late_interest_percent_month: oldLoan.late_interest_percent_month,
+      late_daily_fee: oldLoan.late_daily_fee,
       renegotiated_from_id: oldId,
       status: "open",
     })

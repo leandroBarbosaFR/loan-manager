@@ -65,6 +65,14 @@ const money = z.coerce
   .nonnegative("Amount cannot be negative")
   .max(99_999_999.99, "Amount is too large");
 
+/** Optional non-negative amount (empty → 0). */
+const optionalMoney = z.coerce
+  .number({ invalid_type_error: "Enter a valid amount" })
+  .nonnegative("Amount cannot be negative")
+  .max(99_999_999.99, "Amount is too large")
+  .optional()
+  .default(0);
+
 // ---------------------------------------------------------------------------
 // WhatsApp reminder settings
 // ---------------------------------------------------------------------------
@@ -202,6 +210,7 @@ export const loanSchema = z
     // Late penalties (optional; 0 = none).
     late_fee_percent: percent,
     late_interest_percent_month: percent,
+    late_daily_fee: optionalMoney,
     // Interest-only / rollover loan: borrower can pay just the fee each period.
     rollover: z.coerce.boolean().optional().default(false),
     // Installment generation (optional).

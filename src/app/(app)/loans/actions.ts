@@ -38,6 +38,7 @@ function parse(formData: FormData) {
     notes: formData.get("notes"),
     late_fee_percent: formData.get("late_fee_percent"),
     late_interest_percent_month: formData.get("late_interest_percent_month"),
+    late_daily_fee: formData.get("late_daily_fee"),
     rollover: formData.get("rollover") === "on",
     generate_installments: formData.get("generate_installments") === "on",
     installment_count: formData.get("installment_count") || undefined,
@@ -73,6 +74,7 @@ export async function updateLoanAction(
     notes: formData.get("notes"),
     late_fee_percent: formData.get("late_fee_percent"),
     late_interest_percent_month: formData.get("late_interest_percent_month"),
+    late_daily_fee: formData.get("late_daily_fee"),
     generate_installments: false,
   });
   if (!parsed.success) return zodToFieldErrors(parsed.error);
