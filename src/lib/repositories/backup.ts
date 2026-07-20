@@ -1,6 +1,6 @@
 import "server-only";
 import { createAdminClient } from "@/lib/supabase/admin";
-import { toCsv, type CsvValue } from "@/lib/csv";
+import { objectsToCsv } from "@/lib/csv";
 
 /** Every table dumped by a backup run, in restore-friendly order. */
 const TABLES = [
@@ -26,23 +26,6 @@ export interface BackupResult {
   folder: string;
   files: { table: string; rows: number }[];
   pruned: string[];
-}
-
-/** Serializes rows to CSV, flattening non-scalar values. */
-function rowsToCsv(rows: Record<string, unknown>[]): string {
-  const first = rows[0];
-  if (!first) return toCsv([], []);
-  const headers = Object.keys(first);
-  const body: CsvValue[][] = rows.map((row) =>
-    headers.map((h) => {
-      const v = row[h];
-      if (v === null || v === undefined) return null;
-      if (typeof v === "boolean") return v ? "true" : "false";
-      if (typeof v === "object") return JSON.stringify(v);
-      return v as CsvValue;
-    }),
-  );
-  return toCsv(headers, body);
 }
 
 type AdminClient = ReturnType<typeof createAdminClient>;
@@ -98,7 +81,7 @@ export async function runBackup(timestamp: string): Promise<BackupResult> {
     if (error) throw new Error(`${table}: ${error.message}`);
 
     const rows = (data ?? []) as unknown as Record<string, unknown>[];
-    const csv = rowsToCsv(rows);
+    const csv = objectsToCsv(rows);
 
     const { error: uploadError } = await admin.storage
       .from(BUCKET)

@@ -62,6 +62,10 @@ const en = {
   "settings.security": "Security",
   "settings.securityDesc": "Set a new password for your account.",
   "settings.language": "Language",
+  "settings.dataExport": "Export my data",
+  "settings.dataExportDesc":
+    "Download a full ZIP of all your data — every table as CSV, a complete JSON copy, and your uploaded files.",
+  "settings.dataExportButton": "Download all my data (.zip)",
   "settings.profileSaved": "Profile updated",
   "settings.emailReadonly": "Email",
 
@@ -198,6 +202,7 @@ const en = {
   "users.colRole": "Role",
   "users.colCreated": "Created",
   "users.you": "You",
+  "users.export": "Export",
   "users.deleteConfirm":
     "Delete this user and ALL their customers, loans and documents? This cannot be undone.",
   "users.empty": "No users yet.",
@@ -604,6 +609,10 @@ const ptBR: Messages = {
   "settings.security": "Segurança",
   "settings.securityDesc": "Defina uma nova senha para sua conta.",
   "settings.language": "Idioma",
+  "settings.dataExport": "Exportar meus dados",
+  "settings.dataExportDesc":
+    "Baixe um ZIP completo com todos os seus dados — cada tabela em CSV, uma cópia completa em JSON e os arquivos que você enviou.",
+  "settings.dataExportButton": "Baixar todos os meus dados (.zip)",
   "settings.profileSaved": "Perfil atualizado",
   "settings.emailReadonly": "E-mail",
 
@@ -740,6 +749,7 @@ const ptBR: Messages = {
   "users.colRole": "Papel",
   "users.colCreated": "Criado em",
   "users.you": "Você",
+  "users.export": "Exportar",
   "users.deleteConfirm":
     "Excluir este usuário e TODOS os seus clientes, empréstimos e documentos? Esta ação não pode ser desfeita.",
   "users.empty": "Nenhum usuário ainda.",

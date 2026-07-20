@@ -1,6 +1,7 @@
 import { PageHeader } from "@/components/page-header";
 import { LanguageSwitcher } from "@/components/language-switcher";
 import { SetPasswordForm } from "@/components/set-password-form";
+import { buttonVariants } from "@/components/ui/button";
 import { ProfileForm } from "./profile-form";
 import { changePasswordAction } from "@/app/change-password/actions";
 import { getProfile } from "@/lib/auth";
@@ -50,6 +51,19 @@ export default async function SettingsPage() {
             submitLabel={t("changePassword.submit")}
           />
         </div>
+      </Section>
+
+      <Section
+        title={t("settings.dataExport")}
+        description={t("settings.dataExportDesc")}
+      >
+        <a
+          href="/api/export"
+          download
+          className={buttonVariants({ variant: "outline" })}
+        >
+          {t("settings.dataExportButton")}
+        </a>
       </Section>
 
       <Section title={t("settings.language")}>

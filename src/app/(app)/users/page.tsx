@@ -1,5 +1,6 @@
 import { PageHeader } from "@/components/page-header";
 import { DeleteButton } from "@/components/delete-button";
+import { buttonVariants } from "@/components/ui/button";
 import {
   Table,
   TableHeader,
@@ -68,12 +69,21 @@ export default async function UsersPage() {
                     {formatDate(p.created_at)}
                   </TableCell>
                   <TableCell className="text-right">
-                    {isSelf ? null : (
-                      <DeleteButton
-                        action={deleteUserAction.bind(null, p.id)}
-                        confirmMessage={t("users.deleteConfirm")}
-                      />
-                    )}
+                    <div className="flex items-center justify-end gap-2">
+                      <a
+                        href={`/api/export?userId=${p.id}`}
+                        download
+                        className={buttonVariants({ variant: "outline", size: "sm" })}
+                      >
+                        {t("users.export")}
+                      </a>
+                      {isSelf ? null : (
+                        <DeleteButton
+                          action={deleteUserAction.bind(null, p.id)}
+                          confirmMessage={t("users.deleteConfirm")}
+                        />
+                      )}
+                    </div>
                   </TableCell>
                 </TableRow>
               );
