@@ -1,11 +1,11 @@
 "use client";
 
 import Link from "next/link";
-import { useActionState, useState } from "react";
-import { Eye, EyeSlash } from "@phosphor-icons/react";
+import { useActionState } from "react";
 import { login } from "./actions";
 import { Brand } from "@/components/brand";
 import { Input } from "@/components/ui/input";
+import { PasswordInput } from "@/components/password-input";
 import { FormField, FormError } from "@/components/form-field";
 import { SubmitButton } from "@/components/submit-button";
 import { useT } from "@/lib/i18n/context";
@@ -20,7 +20,6 @@ const ERROR_KEYS: Record<string, MessageKey> = {
 export default function LoginPage() {
   const t = useT();
   const [state, formAction] = useActionState(login, null);
-  const [showPassword, setShowPassword] = useState(false);
 
   // Server returns stable codes; translate them here (fallback to raw text).
   const tr = (code?: string) =>
@@ -58,27 +57,12 @@ export default function LoginPage() {
             htmlFor="password"
             errors={trList(state?.fieldErrors?.password)}
           >
-            <div className="relative">
-              <Input
-                id="password"
-                name="password"
-                type={showPassword ? "text" : "password"}
-                autoComplete="current-password"
-                className="pr-10"
-                required
-              />
-              <button
-                type="button"
-                onClick={() => setShowPassword((v) => !v)}
-                aria-label={
-                  showPassword ? t("login.hidePassword") : t("login.showPassword")
-                }
-                aria-pressed={showPassword}
-                className="absolute inset-y-0 right-0 flex items-center px-3 text-muted-foreground hover:text-foreground focus-visible:text-foreground focus-visible:outline-none"
-              >
-                {showPassword ? <EyeSlash size={18} /> : <Eye size={18} />}
-              </button>
-            </div>
+            <PasswordInput
+              id="password"
+              name="password"
+              autoComplete="current-password"
+              required
+            />
           </FormField>
 
           <SubmitButton className="w-full" pendingText={t("login.signingIn")}>

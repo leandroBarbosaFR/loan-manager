@@ -1,7 +1,7 @@
 "use client";
 
 import { useActionState } from "react";
-import { Input } from "@/components/ui/input";
+import { PasswordInput } from "@/components/password-input";
 import { FormField, FormError } from "@/components/form-field";
 import { SubmitButton } from "@/components/submit-button";
 import type { ActionState } from "@/lib/action-state";
@@ -32,20 +32,18 @@ export function SetPasswordForm({
     <form action={formAction}>
       <FormError message={errorMsg} />
       <FormField label={t("password.new")} htmlFor="password">
-        <Input
+        <PasswordInput
           id="password"
           name="password"
-          type="password"
           autoComplete="new-password"
           minLength={8}
           required
         />
       </FormField>
       <FormField label={t("password.confirm")} htmlFor="confirm">
-        <Input
+        <PasswordInput
           id="confirm"
           name="confirm"
-          type="password"
           autoComplete="new-password"
           minLength={8}
           required
