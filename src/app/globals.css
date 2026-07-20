@@ -34,6 +34,17 @@ input[type="number"] {
   -moz-appearance: textfield;
 }
 
+/* iOS Safari auto-zooms when a focused field's font is smaller than 16px. Our
+   inputs use 14px (text-sm) for a compact look, so bump them to 16px on iOS
+   only — desktop keeps the compact size. This kills the "zoom on every tap". */
+@supports (-webkit-touch-callout: none) {
+  input,
+  select,
+  textarea {
+    font-size: 16px;
+  }
+}
+
 /* Native <select> controls: strip the OS control chrome so our dark
    background applies (otherwise macOS paints a light-grey native control),
    and force the dropdown option list onto the dark surface. */

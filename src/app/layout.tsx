@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Inter, Nanum_Pen_Script } from "next/font/google";
 import "./globals.css";
 import { I18nProvider } from "@/lib/i18n/context";
@@ -21,6 +21,16 @@ const nanumPenScript = Nanum_Pen_Script({
 export const metadata: Metadata = {
   title: "lendly.",
   description: "Internal loan tracking",
+};
+
+// Lock zoom on iOS: prevents pinch / double-tap zoom, and combined with the
+// 16px input font in globals.css stops Safari's auto-zoom when focusing fields.
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 1,
+  userScalable: false,
+  viewportFit: "cover",
 };
 
 export default async function RootLayout({
