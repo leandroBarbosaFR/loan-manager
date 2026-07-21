@@ -275,7 +275,7 @@ export default async function LoanDetailPage({
                   <StatusBadge status={effectiveInstallmentStatus(inst)} />
                 </TableCell>
                 <TableCell>
-                  <PaymentControl installment={inst} />
+                  <PaymentControl installment={inst} lateCharge={lc.total} />
                 </TableCell>
               </TableRow>
               );

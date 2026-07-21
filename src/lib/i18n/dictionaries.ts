@@ -397,6 +397,8 @@ const en = {
   "payment.remaining": "Remaining",
   "payment.amountHelp":
     "How much did they pay? Keep the full amount, or change it for a partial payment.",
+  "payment.includesLate":
+    "Includes {late} in late charges ({base} installment + late fee). Edit if they paid a different amount.",
   "payment.note": "Note (optional)",
   "payment.history": "Payments",
   "payment.noPayments": "No payments recorded yet.",
@@ -945,6 +947,8 @@ const ptBR: Messages = {
   "payment.remaining": "Restante",
   "payment.amountHelp":
     "Quanto ele pagou? Mantenha o valor total ou altere para registrar um pagamento parcial.",
+  "payment.includesLate":
+    "Inclui {late} de encargos ({base} da parcela + multa). Edite se ele pagou outro valor.",
   "payment.note": "Observação (opcional)",
   "payment.history": "Pagamentos",
   "payment.noPayments": "Nenhum pagamento registrado ainda.",

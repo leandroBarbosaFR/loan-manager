@@ -182,7 +182,11 @@ describe("loanTotals", () => {
   it("sums payments and derives profit & outstanding", () => {
     const totals = loanTotals(
       { principal: 1000, total_receivable: 1200 },
-      [{ paid_amount: 600 }, { paid_amount: null }, { paid_amount: 200 }],
+      [
+        { amount: 600, paid_amount: 600 },
+        { amount: 400, paid_amount: null },
+        { amount: 200, paid_amount: 200 },
+      ],
     );
     expect(totals).toEqual({
       principal: 1000,
@@ -191,6 +195,18 @@ describe("loanTotals", () => {
       paid: 800,
       outstanding: 400,
     });
+  });
+
+  it("books a collected late charge (payment above the installment) as profit", () => {
+    // Installment is 240 but the borrower paid 280 (incl. R$40 late charge).
+    const totals = loanTotals(
+      { principal: 200, total_receivable: 240 },
+      [{ amount: 240, paid_amount: 280 }],
+    );
+    expect(totals.paid).toBe(280);
+    expect(totals.receivable).toBe(280);
+    expect(totals.profit).toBe(80); // 40 scheduled + 40 late charge
+    expect(totals.outstanding).toBe(0); // never negative
   });
 
   it("handles no payments", () => {
@@ -203,7 +219,11 @@ describe("loanTotals", () => {
   it("avoids float drift when summing many payments", () => {
     const totals = loanTotals(
       { principal: 0, total_receivable: 0.3 },
-      [{ paid_amount: 0.1 }, { paid_amount: 0.1 }, { paid_amount: 0.1 }],
+      [
+        { amount: 0.1, paid_amount: 0.1 },
+        { amount: 0.1, paid_amount: 0.1 },
+        { amount: 0.1, paid_amount: 0.1 },
+      ],
     );
     expect(totals.paid).toBe(0.3);
     expect(totals.outstanding).toBe(0);

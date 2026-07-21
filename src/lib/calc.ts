@@ -239,16 +239,24 @@ export function renegotiationPrincipal(
 
 export function loanTotals(
   loan: Pick<Loan, "principal" | "total_receivable">,
-  installments: Pick<Installment, "paid_amount">[],
+  installments: Pick<Installment, "amount" | "paid_amount">[],
 ): LoanTotals {
   const paid = round2(
     installments.reduce((sum, i) => sum + (i.paid_amount ?? 0), 0),
   );
+  // A collected late charge shows up as a payment exceeding the installment's
+  // scheduled amount. Count that overpayment as earned so it becomes realized
+  // profit (and never pushes outstanding below zero). No payment → earned is
+  // just the scheduled amounts, so the loan-level receivable is unchanged.
+  const earned = round2(
+    installments.reduce((sum, i) => sum + Math.max(i.amount, i.paid_amount ?? 0), 0),
+  );
+  const receivable = round2(Math.max(loan.total_receivable, earned));
   return {
     principal: loan.principal,
-    receivable: loan.total_receivable,
-    profit: round2(loan.total_receivable - loan.principal),
+    receivable,
+    profit: round2(receivable - loan.principal),
     paid,
-    outstanding: round2(loan.total_receivable - paid),
+    outstanding: round2(receivable - paid),
   };
 }

@@ -38,7 +38,7 @@ export async function getDashboardStats(
   const [{ data: loans, error: loansError }, { data: installments, error: instError }, { count: customerCount }] =
     await Promise.all([
       loansQuery,
-      supabase.from("installments").select("paid_amount, loan_id"),
+      supabase.from("installments").select("amount, paid_amount, loan_id"),
       supabase.from("customers").select("*", { count: "exact", head: true }),
     ]);
 
@@ -48,16 +48,33 @@ export async function getDashboardStats(
   const loanRows = loans ?? [];
   const inScope = new Set(loanRows.map((l) => l.id));
 
+  // Per-loan collected and "earned" (scheduled amount, but bumped by any
+  // collected late charge = a payment above the installment's amount).
+  const paidByLoan = new Map<string, number>();
+  const earnedByLoan = new Map<string, number>();
+  for (const i of installments ?? []) {
+    if (!inScope.has(i.loan_id)) continue;
+    const paid = i.paid_amount ?? 0;
+    paidByLoan.set(i.loan_id, (paidByLoan.get(i.loan_id) ?? 0) + paid);
+    earnedByLoan.set(
+      i.loan_id,
+      (earnedByLoan.get(i.loan_id) ?? 0) + Math.max(i.amount, paid),
+    );
+  }
+
   const totalPrincipal = round2(
     loanRows.reduce((s, l) => s + l.principal, 0),
   );
+  // A loan's receivable is its scheduled total, raised by any late charges
+  // actually collected on it — so collected can never exceed receivable.
   const totalReceivable = round2(
-    loanRows.reduce((s, l) => s + l.total_receivable, 0),
+    loanRows.reduce(
+      (s, l) => s + Math.max(l.total_receivable, earnedByLoan.get(l.id) ?? 0),
+      0,
+    ),
   );
   const totalCollected = round2(
-    (installments ?? [])
-      .filter((i) => inScope.has(i.loan_id))
-      .reduce((s, i) => s + (i.paid_amount ?? 0), 0),
+    loanRows.reduce((s, l) => s + (paidByLoan.get(l.id) ?? 0), 0),
   );
 
   return {

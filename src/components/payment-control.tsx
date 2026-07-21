@@ -15,7 +15,14 @@ import { today, formatMoney } from "@/lib/format";
 import { effectiveInstallmentStatus, round2 } from "@/lib/calc";
 import { useT } from "@/lib/i18n/context";
 
-export function PaymentControl({ installment }: { installment: Installment }) {
+export function PaymentControl({
+  installment,
+  lateCharge = 0,
+}: {
+  installment: Installment;
+  /** Late charge accrued on this installment as of today (0 = none). */
+  lateCharge?: number;
+}) {
   const t = useT();
   const [open, setOpen] = useState(false);
   const action = registerPaymentAction.bind(
@@ -34,6 +41,9 @@ export function PaymentControl({ installment }: { installment: Installment }) {
   const isPaid = effectiveInstallmentStatus(installment) === "paid";
   const paidSoFar = installment.paid_amount ?? 0;
   const remaining = round2(installment.amount - paidSoFar);
+  const late = round2(lateCharge);
+  // What the borrower owes today, including any late charge.
+  const dueToday = round2(remaining + late);
   const isPartial = !isPaid && paidSoFar > 0;
 
   if (isPaid) {
@@ -89,15 +99,24 @@ export function PaymentControl({ installment }: { installment: Installment }) {
               type="number"
               step="0.01"
               min="0.01"
-              max={installment.amount}
+              max={dueToday}
               inputMode="decimal"
-              defaultValue={remaining}
+              defaultValue={dueToday}
               autoFocus
               required
             />
-            <p className="mt-1 text-xs text-muted-foreground">
-              {t("payment.amountHelp")}
-            </p>
+            {late > 0 ? (
+              <p className="mt-1 text-xs text-warning tabular-nums">
+                {t("payment.includesLate", {
+                  base: formatMoney(remaining),
+                  late: formatMoney(late),
+                })}
+              </p>
+            ) : (
+              <p className="mt-1 text-xs text-muted-foreground">
+                {t("payment.amountHelp")}
+              </p>
+            )}
           </div>
           <div>
             <label

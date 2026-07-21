@@ -18,11 +18,23 @@ import {
   countByStatus,
   type InstallmentFilter,
 } from "@/lib/repositories/installments";
-import { effectiveInstallmentStatus } from "@/lib/calc";
-import { formatMoney, formatDate } from "@/lib/format";
+import { effectiveInstallmentStatus, lateCharge } from "@/lib/calc";
+import { formatMoney, formatDate, today } from "@/lib/format";
 import { getT } from "@/lib/i18n/server";
+import type { InstallmentWithRelations } from "@/types/database";
 
 export const dynamic = "force-dynamic";
+
+/** Late charge accrued on an installment as of today, from its loan's config. */
+function lateChargeFor(inst: InstallmentWithRelations): number {
+  const loan = inst.loan;
+  if (!loan) return 0;
+  return lateCharge(inst, today(), {
+    feePercent: loan.late_fee_percent ?? 0,
+    interestPercentMonth: loan.late_interest_percent_month ?? 0,
+    dailyFee: loan.late_daily_fee ?? 0,
+  }).total;
+}
 
 const FILTERS: InstallmentFilter[] = ["all", "pending", "paid", "overdue"];
 
@@ -128,7 +140,7 @@ export default async function InstallmentsPage({
                 ) : (
                   <span />
                 )}
-                <PaymentControl installment={inst} />
+                <PaymentControl installment={inst} lateCharge={lateChargeFor(inst)} />
               </div>
             </div>
           ))}
@@ -186,7 +198,7 @@ export default async function InstallmentsPage({
                         {t("installments.loanLink")}
                       </Link>
                     ) : null}
-                    <PaymentControl installment={inst} />
+                    <PaymentControl installment={inst} lateCharge={lateChargeFor(inst)} />
                   </div>
                 </TableCell>
               </TableRow>
