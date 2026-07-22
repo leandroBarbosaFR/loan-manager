@@ -9,6 +9,10 @@ const PUBLIC_PATHS = [
   "/forgot-password",
   "/privacy",
   "/terms",
+  // Generated metadata icons must be fetchable without a session (iOS fetches
+  // the apple-touch-icon unauthenticated when adding to the home screen).
+  "/apple-icon",
+  "/icon",
 ];
 
 /**
