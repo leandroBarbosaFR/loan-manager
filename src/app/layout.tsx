@@ -40,8 +40,20 @@ export default async function RootLayout({
   const messages = getDictionary(locale);
 
   return (
-    <html lang={locale} className={`${inter.variable} ${nanumPenScript.variable}`}>
+    <html
+      lang={locale}
+      className={`${inter.variable} ${nanumPenScript.variable}`}
+      suppressHydrationWarning
+    >
       <body className="min-h-screen bg-canvas font-sans text-foreground antialiased">
+        {/* Apply the saved theme before paint to avoid a light/dark flash.
+            The accent color is user-specific and injected server-side in the
+            authenticated layout, so it isn't handled here. */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `(function(){try{var t=localStorage.getItem('theme');var d=document.documentElement;if(t==='light'||t==='dark'){d.setAttribute('data-theme',t);}else{d.removeAttribute('data-theme');}}catch(e){}})();`,
+          }}
+        />
         <I18nProvider locale={locale} messages={messages}>
           {children}
         </I18nProvider>

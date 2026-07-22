@@ -8,7 +8,7 @@ import {
   listDueSoon,
 } from "@/lib/repositories/installments";
 import { round2 } from "@/lib/calc";
-import { formatMoney, today, addDays } from "@/lib/format";
+import { formatMoney, formatDate, today, addDays } from "@/lib/format";
 import type { MessageKey, Translator } from "@/lib/i18n/dictionaries";
 import type { InstallmentWithRelations } from "@/types/database";
 import { getT } from "@/lib/i18n/server";
@@ -55,10 +55,12 @@ const BUCKETS: { key: BucketKey; label: MessageKey; danger?: boolean; warn?: boo
 function DueBucket({
   bucket,
   items,
+  date,
   t,
 }: {
   bucket: (typeof BUCKETS)[number];
   items: InstallmentWithRelations[];
+  date?: string;
   t: Translator;
 }) {
   const total = round2(
@@ -72,10 +74,17 @@ function DueBucket({
 
   return (
     <div className="rounded-lg bg-surface p-4 shadow-sm">
-      <div className="flex items-center justify-between">
-        <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
-          {t(bucket.label)}
-        </p>
+      <div className="flex items-start justify-between">
+        <div>
+          <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
+            {t(bucket.label)}
+          </p>
+          {date ? (
+            <p className="mt-0.5 text-[11px] tabular-nums text-muted-foreground/70">
+              {formatDate(date)}
+            </p>
+          ) : null}
+        </div>
         <span className="rounded-full bg-muted px-2 py-0.5 text-xs font-medium tabular-nums text-muted-foreground">
           {items.length}
         </span>
@@ -175,6 +184,15 @@ export default async function DashboardPage({
   const todayStr = today();
   const d1 = addDays(todayStr, 1);
   const d2 = addDays(todayStr, 2);
+  const d3 = addDays(todayStr, 3);
+  // Concrete date shown under each bucket label (overdue is a range → none).
+  const bucketDates: Record<BucketKey, string | undefined> = {
+    overdue: undefined,
+    today: todayStr,
+    j1: d1,
+    j2: d2,
+    j3: d3,
+  };
   const bucketed: Record<BucketKey, InstallmentWithRelations[]> = {
     overdue: [],
     today: [],
@@ -274,7 +292,13 @@ export default async function DashboardPage({
       </h2>
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-5">
         {BUCKETS.map((b) => (
-          <DueBucket key={b.key} bucket={b} items={bucketed[b.key]} t={t} />
+          <DueBucket
+            key={b.key}
+            bucket={b}
+            items={bucketed[b.key]}
+            date={bucketDates[b.key]}
+            t={t}
+          />
         ))}
       </div>
 

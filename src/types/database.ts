@@ -24,6 +24,8 @@ export type Profile = {
   street: string | null;
   city: string | null;
   country: string | null;
+  /** Personal accent color (#rrggbb); null = app default. Follows the user. */
+  accent_color: string | null;
   created_at: string;
 };
 

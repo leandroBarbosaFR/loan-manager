@@ -14,6 +14,7 @@ import { listProfiles } from "@/lib/repositories/users";
 import { formatDate } from "@/lib/format";
 import { getT } from "@/lib/i18n/server";
 import { UserForm } from "./user-form";
+import { WhatsappInviteButton } from "./whatsapp-invite-button";
 import { deleteUserAction } from "./actions";
 
 export const dynamic = "force-dynamic";
@@ -70,6 +71,9 @@ export default async function UsersPage() {
                   </TableCell>
                   <TableCell className="text-right">
                     <div className="flex items-center justify-end gap-2">
+                      {p.phone ? (
+                        <WhatsappInviteButton userId={p.id} />
+                      ) : null}
                       <a
                         href={`/api/export?userId=${p.id}`}
                         download

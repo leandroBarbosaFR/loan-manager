@@ -2,11 +2,14 @@
 
 import Link from "next/link";
 import { useState } from "react";
+import { List, X } from "@phosphor-icons/react";
 import { Nav } from "@/components/nav";
 import { Brand } from "@/components/brand";
 import { SettingsIcon } from "@/components/nav-icons";
 import { Button } from "@/components/ui/button";
 import { LanguageSwitcher } from "@/components/language-switcher";
+import { ThemeToggle } from "@/components/theme-toggle";
+import { PersonalizationButton } from "@/components/personalization-button";
 import { logout } from "@/app/(app)/actions";
 import { useT } from "@/lib/i18n/context";
 import { cn } from "@/lib/utils";
@@ -14,10 +17,12 @@ import { cn } from "@/lib/utils";
 export function AppShell({
   email,
   isSuperAdmin = false,
+  accentColor = null,
   children,
 }: {
   email: string;
   isSuperAdmin?: boolean;
+  accentColor?: string | null;
   children: React.ReactNode;
 }) {
   const [open, setOpen] = useState(false);
@@ -29,20 +34,25 @@ export function AppShell({
       {/* Mobile top bar */}
       <header className="sticky top-0 z-40 flex items-center justify-between border-b border-border bg-background px-4 py-3 md:hidden">
         <Brand className="text-3xl" />
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={() => setOpen((v) => !v)}
-          aria-expanded={open}
-        >
-          {open ? t("app.close") : t("app.menu")}
-        </Button>
+        <div className="flex items-center gap-2">
+          <PersonalizationButton initialColor={accentColor} />
+          <ThemeToggle />
+          <button
+            type="button"
+            onClick={() => setOpen(true)}
+            aria-expanded={open}
+            aria-label={t("app.menu")}
+            className="flex h-9 w-9 items-center justify-center rounded-lg border border-border text-foreground transition-colors hover:bg-surface"
+          >
+            <List size={20} />
+          </button>
+        </div>
       </header>
 
-      {/* Mobile backdrop */}
+      {/* Mobile backdrop — blurs the content behind the drawer */}
       {open && (
         <div
-          className="absolute inset-0 z-40 bg-black/40 md:hidden"
+          className="absolute inset-0 z-40 bg-black/40 backdrop-blur-sm md:hidden"
           onClick={() => setOpen(false)}
           aria-hidden="true"
         />
@@ -51,8 +61,8 @@ export function AppShell({
       {/* Sidebar */}
       <aside
         className={cn(
-          // Mobile: fixed overlay drawer that doesn't push content down
-          "absolute inset-y-0 left-0 z-50 flex w-72 max-w-[85%] flex-col overflow-y-auto border-border bg-background transition-transform duration-200 ease-out",
+          // Mobile: fixed overlay drawer (80% width) that doesn't push content down
+          "absolute inset-y-0 left-0 z-50 flex w-4/5 flex-col overflow-y-auto border-border bg-background transition-transform duration-200 ease-out",
           open ? "translate-x-0" : "-translate-x-full",
           // Desktop: static sidebar in normal flow
           "md:static md:z-auto md:w-56 md:max-w-none md:translate-x-0 md:shrink-0 md:bg-transparent md:transition-none",
@@ -61,17 +71,22 @@ export function AppShell({
         {/* Mobile drawer header */}
         <div className="flex items-center justify-between border-b border-border px-4 py-3 md:hidden">
           <Brand className="text-3xl" />
-          <Button
-            variant="outline"
-            size="sm"
+          <button
+            type="button"
             onClick={() => setOpen(false)}
+            aria-label={t("app.close")}
+            className="flex h-9 w-9 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-surface hover:text-foreground"
           >
-            {t("app.close")}
-          </Button>
+            <X size={20} />
+          </button>
         </div>
-        {/* Desktop logo */}
-        <div className="hidden px-4 py-5 md:block">
+        {/* Desktop logo + personalization + theme toggle */}
+        <div className="hidden items-center justify-between px-4 py-5 md:flex">
           <Brand className="text-4xl" />
+          <div className="flex items-center gap-2">
+            <PersonalizationButton initialColor={accentColor} />
+            <ThemeToggle />
+          </div>
         </div>
         <Nav onNavigate={() => setOpen(false)} isSuperAdmin={isSuperAdmin} />
         <div className="mt-auto border-t border-border p-4">

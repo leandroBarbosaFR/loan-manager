@@ -62,6 +62,10 @@ const en = {
   "settings.security": "Security",
   "settings.securityDesc": "Set a new password for your account.",
   "settings.language": "Language",
+  "settings.appearance": "Personalization",
+  "settings.appearanceDesc": "Pick the app's accent color.",
+  "appearance.custom": "Custom",
+  "appearance.reset": "Reset to default",
   "settings.dataExport": "Export my data",
   "settings.dataExportDesc":
     "Download a full ZIP of all your data — every table as CSV, a complete JSON copy, and your uploaded files.",
@@ -203,6 +207,11 @@ const en = {
   "users.colCreated": "Created",
   "users.you": "You",
   "users.export": "Export",
+  "users.waInvite": "WhatsApp",
+  "users.waInviteMessage":
+    "You've been invited to Lendly. Create your password to get in: {link}",
+  "users.waNoPhone": "No phone number on file for this user.",
+  "users.waFailed": "Could not generate the WhatsApp invite. Try again.",
   "users.deleteConfirm":
     "Delete this user and ALL their customers, loans and documents? This cannot be undone.",
   "users.empty": "No users yet.",
@@ -212,6 +221,10 @@ const en = {
   "app.close": "Close",
   "app.signOut": "Sign out",
   "app.language": "Language",
+  "app.theme": "Theme",
+  "theme.system": "System",
+  "theme.light": "Light",
+  "theme.dark": "Dark",
 
   // Statuses
   "status.open": "Open",
@@ -612,6 +625,10 @@ const ptBR: Messages = {
   "settings.security": "Segurança",
   "settings.securityDesc": "Defina uma nova senha para sua conta.",
   "settings.language": "Idioma",
+  "settings.appearance": "Personalização",
+  "settings.appearanceDesc": "Escolha a cor de destaque do app.",
+  "appearance.custom": "Personalizada",
+  "appearance.reset": "Voltar ao padrão",
   "settings.dataExport": "Exportar meus dados",
   "settings.dataExportDesc":
     "Baixe um ZIP completo com todos os seus dados — cada tabela em CSV, uma cópia completa em JSON e os arquivos que você enviou.",
@@ -753,6 +770,11 @@ const ptBR: Messages = {
   "users.colCreated": "Criado em",
   "users.you": "Você",
   "users.export": "Exportar",
+  "users.waInvite": "WhatsApp",
+  "users.waInviteMessage":
+    "Você foi convidado para o Lendly. Crie sua senha de acesso: {link}",
+  "users.waNoPhone": "Este usuário não tem telefone cadastrado.",
+  "users.waFailed": "Não foi possível gerar o convite por WhatsApp. Tente de novo.",
   "users.deleteConfirm":
     "Excluir este usuário e TODOS os seus clientes, empréstimos e documentos? Esta ação não pode ser desfeita.",
   "users.empty": "Nenhum usuário ainda.",
@@ -762,6 +784,10 @@ const ptBR: Messages = {
   "app.close": "Fechar",
   "app.signOut": "Sair",
   "app.language": "Idioma",
+  "app.theme": "Tema",
+  "theme.system": "Sistema",
+  "theme.light": "Claro",
+  "theme.dark": "Escuro",
 
   // Statuses
   "status.open": "Aberto",

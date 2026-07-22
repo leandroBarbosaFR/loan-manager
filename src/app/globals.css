@@ -2,14 +2,70 @@
 @tailwind components;
 @tailwind utilities;
 
+/*
+ * Theme tokens as "R G B" channel triples so Tailwind can apply opacity
+ * modifiers (e.g. bg-surface/70). Light is the default; dark applies either
+ * when the OS prefers dark (and the user hasn't forced light) or when the user
+ * explicitly picks dark via [data-theme="dark"].
+ */
 :root {
+  --color-canvas: 244 244 247;
+  --color-surface: 255 255 255;
+  --color-background: 255 255 255;
+  --color-border: 229 231 235;
+  --color-foreground: 16 24 40;
+  --color-muted: 241 242 244;
+  --color-muted-foreground: 102 112 133;
+  --color-accent: 239 234 255;
+  --color-accent-foreground: 91 63 209;
+  --color-primary: 124 92 255;
+  --color-primary-hover: 107 73 240;
+  --color-primary-foreground: 255 255 255;
+  --color-ring: 124 92 255;
+  --color-destructive: 224 69 63;
+  --color-success: 22 163 74;
+  --color-warning: 217 119 6;
+  color-scheme: light;
+}
+
+/* Dark palette — kept in one place, referenced by both selectors below. */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --color-canvas: 16 16 18;
+    --color-surface: 28 28 31;
+    --color-background: 12 12 14;
+    --color-border: 40 40 45;
+    --color-foreground: 240 240 242;
+    --color-muted: 37 37 42;
+    --color-muted-foreground: 150 150 156;
+    --color-accent: 34 31 43;
+    --color-accent-foreground: 196 184 255;
+    --color-destructive: 240 82 82;
+    --color-success: 34 197 94;
+    --color-warning: 245 158 11;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --color-canvas: 16 16 18;
+  --color-surface: 28 28 31;
+  --color-background: 12 12 14;
+  --color-border: 40 40 45;
+  --color-foreground: 240 240 242;
+  --color-muted: 37 37 42;
+  --color-muted-foreground: 150 150 156;
+  --color-accent: 34 31 43;
+  --color-accent-foreground: 196 184 255;
+  --color-destructive: 240 82 82;
+  --color-success: 34 197 94;
+  --color-warning: 245 158 11;
   color-scheme: dark;
 }
 
 html,
 body {
-  background-color: #0b0c10;
-  color: #e8e9ee;
+  background-color: rgb(var(--color-canvas));
+  color: rgb(var(--color-foreground));
 }
 
 body {
@@ -20,7 +76,7 @@ body {
 
 @layer base {
   * {
-    border-color: #262832;
+    border-color: rgb(var(--color-border));
   }
 }
 
@@ -54,35 +110,35 @@ select {
 }
 select option,
 select optgroup {
-  background-color: #161821;
-  color: #e8e9ee;
+  background-color: rgb(var(--color-surface));
+  color: rgb(var(--color-foreground));
 }
 
 /* driver.js onboarding tour — themed to match the app (dark + violet). */
 .driver-popover.lendly-tour {
-  background: #161821;
+  background: rgb(var(--color-surface));
   border-radius: 0.75rem;
   box-shadow: 0 16px 40px -12px rgb(0 0 0 / 0.6);
   padding: 1rem 1.25rem;
 }
 .driver-popover.lendly-tour .driver-popover-arrow {
-  color: #161821;
+  color: rgb(var(--color-surface));
 }
 .driver-popover.lendly-tour .driver-popover-title {
   font-size: 1rem;
   font-weight: 600;
-  color: #e8e9ee;
+  color: rgb(var(--color-foreground));
 }
 .driver-popover.lendly-tour .driver-popover-description {
-  color: #c3c6d1;
+  color: rgb(var(--color-muted-foreground));
   font-size: 0.875rem;
 }
 .driver-popover.lendly-tour .driver-popover-progress-text {
-  color: #9599a6;
+  color: rgb(var(--color-muted-foreground));
 }
 .driver-popover.lendly-tour button.driver-popover-next-btn {
-  background: #7c5cff;
-  color: #fff;
+  background: rgb(var(--color-primary));
+  color: rgb(var(--color-primary-foreground));
   text-shadow: none;
   border: none;
   border-radius: 0.5rem;
@@ -90,16 +146,16 @@ select optgroup {
   font-weight: 500;
 }
 .driver-popover.lendly-tour button.driver-popover-next-btn:hover {
-  background: #6b49f0;
+  background: rgb(var(--color-primary-hover));
 }
 .driver-popover.lendly-tour button.driver-popover-prev-btn {
   text-shadow: none;
-  border: 1px solid #262832;
+  border: 1px solid rgb(var(--color-border));
   border-radius: 0.5rem;
-  background: #1e2029;
-  color: #c3c6d1;
+  background: rgb(var(--color-muted));
+  color: rgb(var(--color-foreground));
   font-weight: 500;
 }
 .driver-popover.lendly-tour .driver-popover-close-btn {
-  color: #9599a6;
+  color: rgb(var(--color-muted-foreground));
 }

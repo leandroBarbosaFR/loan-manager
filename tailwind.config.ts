@@ -9,25 +9,27 @@ const config: Config = {
         brand: ["var(--font-brand)", "cursive"],
       },
       colors: {
-        border: "#262832",
+        // Driven by CSS variables in globals.css (light + dark). The channel
+        // triples let Tailwind's /opacity modifiers keep working.
+        border: "rgb(var(--color-border) / <alpha-value>)",
         // chrome surfaces (sidebar drawer, mobile header)
-        background: "#0f1015",
-        foreground: "#e8e9ee",
-        muted: "#1e2029",
-        "muted-foreground": "#9599a6",
-        accent: "#211d3d",
-        "accent-foreground": "#c4b8ff",
-        primary: "#7c5cff",
-        "primary-hover": "#6b49f0",
-        "primary-foreground": "#ffffff",
-        ring: "#7c5cff",
-        destructive: "#f05252",
-        success: "#22c55e",
-        warning: "#f59e0b",
-        // app background behind cards (darkest layer)
-        canvas: "#0b0c10",
-        // elevated card/panel surface (replaces the old bg-white)
-        surface: "#161821",
+        background: "rgb(var(--color-background) / <alpha-value>)",
+        foreground: "rgb(var(--color-foreground) / <alpha-value>)",
+        muted: "rgb(var(--color-muted) / <alpha-value>)",
+        "muted-foreground": "rgb(var(--color-muted-foreground) / <alpha-value>)",
+        accent: "rgb(var(--color-accent) / <alpha-value>)",
+        "accent-foreground": "rgb(var(--color-accent-foreground) / <alpha-value>)",
+        primary: "rgb(var(--color-primary) / <alpha-value>)",
+        "primary-hover": "rgb(var(--color-primary-hover) / <alpha-value>)",
+        "primary-foreground": "rgb(var(--color-primary-foreground) / <alpha-value>)",
+        ring: "rgb(var(--color-ring) / <alpha-value>)",
+        destructive: "rgb(var(--color-destructive) / <alpha-value>)",
+        success: "rgb(var(--color-success) / <alpha-value>)",
+        warning: "rgb(var(--color-warning) / <alpha-value>)",
+        // app background behind cards
+        canvas: "rgb(var(--color-canvas) / <alpha-value>)",
+        // elevated card/panel surface
+        surface: "rgb(var(--color-surface) / <alpha-value>)",
       },
       borderRadius: {
         none: "0",
@@ -39,8 +41,11 @@ const config: Config = {
         full: "9999px",
       },
       boxShadow: {
-        xs: "0 1px 2px 0 rgb(0 0 0 / 0.35)",
-        sm: "0 1px 3px 0 rgb(0 0 0 / 0.45), 0 1px 2px -1px rgb(0 0 0 / 0.45)",
+        // Cards and tables are flat (border-only). xs/sm are intentionally no-ops
+        // so existing shadow-xs/shadow-sm usages render without elevation.
+        xs: "none",
+        sm: "none",
+        // Kept for overlays that genuinely float: modals, dropdowns, toasts, auth.
         md: "0 6px 18px -4px rgb(0 0 0 / 0.55), 0 2px 6px -2px rgb(0 0 0 / 0.4)",
       },
     },
