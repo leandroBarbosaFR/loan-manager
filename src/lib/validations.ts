@@ -137,6 +137,7 @@ export const customerSchema = z.object({
   phone: optionalShort(40),
   street: optionalShort(200),
   street_number: optionalShort(20),
+  street_complement: optionalShort(200),
   neighborhood: optionalShort(120),
   cep: optionalShort(20),
   city: optionalShort(120),

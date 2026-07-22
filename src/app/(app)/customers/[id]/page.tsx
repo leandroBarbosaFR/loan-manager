@@ -64,6 +64,7 @@ export default async function CustomerDetailPage({
 
   const addressLines = [
     [customer.street, customer.street_number].filter(Boolean).join(", "),
+    customer.street_complement,
     customer.neighborhood,
     [customer.city, customer.state].filter(Boolean).join(" - "),
     customer.cep,

@@ -20,6 +20,7 @@ function parse(formData: FormData) {
     phone: formData.get("phone"),
     street: formData.get("street"),
     street_number: formData.get("street_number"),
+    street_complement: formData.get("street_complement"),
     neighborhood: formData.get("neighborhood"),
     cep: formData.get("cep"),
     city: formData.get("city"),

@@ -57,6 +57,8 @@ export type Customer = {
   phone_ddd: string | null;
   street: string | null;
   street_number: string | null;
+  /** Optional address complement (apt / block / reference point). */
+  street_complement: string | null;
   neighborhood: string | null;
   cep: string | null;
   city: string | null;

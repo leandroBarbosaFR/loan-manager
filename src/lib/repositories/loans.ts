@@ -185,7 +185,10 @@ export async function deleteLoan(id: string): Promise<void> {
  * Records a fee-only payment on a rollover loan: collects the current period's
  * fee, charges a fresh fee for next period, and carries the principal forward.
  */
-export async function rollOverLoan(loanId: string): Promise<void> {
+export async function rollOverLoan(
+  loanId: string,
+  nextDueDate?: string,
+): Promise<void> {
   const supabase = await createClient();
 
   const { data: loan, error: loanError } = await supabase
@@ -213,7 +216,7 @@ export async function rollOverLoan(loanId: string): Promise<void> {
   if (!pendingFee) {
     throw new Error("No outstanding fee to roll over");
   }
-  const nextDue = addMonths(pendingFee.due_date, 1);
+  const nextDue = nextDueDate ?? addMonths(pendingFee.due_date, 1);
 
   // 1. Mark this period's fee collected — record it in the ledger and update
   //    the installment cache to match.
@@ -260,6 +263,101 @@ export async function rollOverLoan(loanId: string): Promise<void> {
   if (updError) throw updError;
 
   await syncLoanStatus(loanId);
+}
+
+/**
+ * Ad-hoc "pay interest only" on ANY loan, decided at payment time: collects the
+ * interest for this period, carries the principal forward to `nextDueDate`, and
+ * charges the interest again next period.
+ *
+ * If the loan is already interest-only it just rolls. Otherwise it converts the
+ * loan to interest-only on the fly (keeping paid installments as history) using
+ * `fee` as the recurring interest, then rolls once.
+ */
+export async function payInterestOnly(
+  loanId: string,
+  opts: { fee?: number; nextDueDate?: string } = {},
+): Promise<void> {
+  const supabase = await createClient();
+
+  const { data: loan, error } = await supabase
+    .from("loans")
+    .select("*")
+    .eq("id", loanId)
+    .single();
+  if (error) throw error;
+
+  // Already interest-only → just roll (optionally to a chosen date).
+  if (loan.rollover_fee != null) {
+    await rollOverLoan(loanId, opts.nextDueDate);
+    return;
+  }
+
+  const { data: insts, error: iErr } = await supabase
+    .from("installments")
+    .select("*")
+    .eq("loan_id", loanId);
+  if (iErr) throw iErr;
+  const rows = (insts ?? []) as Installment[];
+
+  const fee = round2(opts.fee ?? loan.total_receivable - loan.principal);
+  if (fee <= 0) {
+    throw new Error("Set an interest amount greater than zero.");
+  }
+
+  const paidSoFar = round2(rows.reduce((s, i) => s + (i.paid_amount ?? 0), 0));
+  const outstandingPrincipal = round2(Math.max(0, loan.principal - paidSoFar));
+
+  // Anchor date for this period: the earliest still-unpaid due date, else today.
+  const unpaid = rows.filter((r) => !r.paid_at);
+  const anchor =
+    unpaid
+      .map((r) => r.due_date)
+      .sort((a, b) => a.localeCompare(b))[0] ?? today();
+
+  // Replace the unpaid schedule with an interest-only structure: one pending
+  // fee + one principal installment, both anchored at this period.
+  const unpaidIds = unpaid.map((r) => r.id);
+  if (unpaidIds.length > 0) {
+    const { error: delErr } = await supabase
+      .from("installments")
+      .delete()
+      .in("id", unpaidIds);
+    if (delErr) throw delErr;
+  }
+
+  const { error: insErr } = await supabase.from("installments").insert([
+    {
+      owner_id: loan.owner_id,
+      loan_id: loanId,
+      due_date: anchor,
+      amount: fee,
+      status: "pending" as const,
+      kind: "fee" as const,
+    },
+    {
+      owner_id: loan.owner_id,
+      loan_id: loanId,
+      due_date: anchor,
+      amount: outstandingPrincipal,
+      status: "pending" as const,
+      kind: "principal" as const,
+    },
+  ]);
+  if (insErr) throw insErr;
+
+  // Mark the loan interest-only; receivable = collected + carried principal +
+  // this period's fee (rollOverLoan then adds the next period's fee).
+  const { error: updErr } = await supabase
+    .from("loans")
+    .update({
+      rollover_fee: fee,
+      total_receivable: round2(paidSoFar + outstandingPrincipal + fee),
+    })
+    .eq("id", loanId);
+  if (updErr) throw updErr;
+
+  await rollOverLoan(loanId, opts.nextDueDate);
 }
 
 /** Recomputes and persists a loan's status from its installments. */

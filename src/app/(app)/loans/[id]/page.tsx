@@ -7,7 +7,7 @@ import { Stat, StatGrid } from "@/components/stat";
 import { StatusBadge } from "@/components/status-badge";
 import { EmptyState } from "@/components/empty-state";
 import { DeleteButton } from "@/components/delete-button";
-import { RolloverButton } from "@/components/rollover-button";
+import { InterestOnlyButton } from "@/components/interest-only-button";
 import { SettleLoanButton } from "@/components/settle-loan-button";
 import { PaymentControl } from "@/components/payment-control";
 import {
@@ -20,11 +20,7 @@ import {
 } from "@/components/ui/table";
 import { getLoan } from "@/lib/repositories/loans";
 import { listPaymentsByLoan } from "@/lib/repositories/payments";
-import {
-  deleteLoanAction,
-  rollOverLoanAction,
-  settleLoanAction,
-} from "../actions";
+import { deleteLoanAction, settleLoanAction } from "../actions";
 import {
   loanTotals,
   effectiveInstallmentStatus,
@@ -32,7 +28,7 @@ import {
   totalLateCharges,
   round2,
 } from "@/lib/calc";
-import { formatMoney, formatDate, today } from "@/lib/format";
+import { formatMoney, formatDate, today, addMonths } from "@/lib/format";
 import { getT } from "@/lib/i18n/server";
 
 export const dynamic = "force-dynamic";
@@ -66,15 +62,22 @@ export default async function LoanDetailPage({
   );
   const canSettle = loan.status !== "paid" && settleAmount > 0;
   const deleteAction = deleteLoanAction.bind(null, id);
-  const rollOverAction = rollOverLoanAction.bind(null, id);
   const settleAction = settleLoanAction.bind(null, id);
   const isRollover = loan.rollover_fee != null;
-  const canRollOver =
-    isRollover &&
-    loan.status !== "paid" &&
-    loan.installments.some(
-      (i) => i.kind === "fee" && effectiveInstallmentStatus(i) !== "paid",
-    );
+
+  // "Pay interest only" is available on any open loan. The interest defaults to
+  // the loan's recurring fee (rollover) or its built-in interest; the next due
+  // date defaults to a month after the earliest unpaid installment.
+  const defaultFee = round2(
+    loan.rollover_fee ?? loan.total_receivable - loan.principal,
+  );
+  const earliestUnpaidDue =
+    loan.installments
+      .filter((i) => effectiveInstallmentStatus(i) !== "paid")
+      .map((i) => i.due_date)
+      .sort((a, b) => a.localeCompare(b))[0] ?? asOf;
+  const defaultNextDue = addMonths(earliestUnpaidDue, 1);
+  const canPayInterestOnly = canSettle && defaultFee > 0;
 
   return (
     <div className="md:pt-6">
@@ -99,13 +102,11 @@ export default async function LoanDetailPage({
         }
         action={
           <div className="flex items-center gap-2">
-            {canRollOver ? (
-              <RolloverButton
-                action={rollOverAction}
-                label={t("loanDetail.rolloverButton")}
-                confirmMessage={t("loanDetail.rolloverConfirm", {
-                  fee: formatMoney(loan.rollover_fee ?? 0),
-                })}
+            {canPayInterestOnly ? (
+              <InterestOnlyButton
+                loanId={id}
+                defaultFee={defaultFee}
+                defaultNextDue={defaultNextDue}
               />
             ) : null}
             {canSettle ? (

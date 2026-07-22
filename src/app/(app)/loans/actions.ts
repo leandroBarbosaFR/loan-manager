@@ -13,11 +13,13 @@ import {
   updateLoan,
   deleteLoan,
   rollOverLoan,
+  payInterestOnly,
   renegotiateLoan,
 } from "@/lib/repositories/loans";
 import { updateInstallmentSchedule } from "@/lib/repositories/installments";
 import { settleLoan } from "@/lib/repositories/payments";
 import { today } from "@/lib/format";
+import { round2 } from "@/lib/calc";
 
 function parseInstallments(raw: FormDataEntryValue | null) {
   if (typeof raw !== "string" || raw.length === 0) return undefined;
@@ -114,6 +116,24 @@ export async function rollOverLoanAction(id: string): Promise<void> {
   revalidatePath(`/loans/${id}`);
   revalidatePath("/installments");
   revalidatePath("/dashboard");
+}
+
+/** Ad-hoc "pay interest only" for any loan (interest amount + next due date). */
+export async function payInterestOnlyAction(
+  id: string,
+  formData: FormData,
+): Promise<void> {
+  const feeRaw = Number(formData.get("fee"));
+  const fee = Number.isFinite(feeRaw) && feeRaw > 0 ? round2(feeRaw) : undefined;
+  const dateRaw = String(formData.get("next_due_date") ?? "");
+  const nextDueDate = /^\d{4}-\d{2}-\d{2}$/.test(dateRaw) ? dateRaw : undefined;
+
+  await payInterestOnly(id, { fee, nextDueDate });
+  revalidatePath("/loans");
+  revalidatePath(`/loans/${id}`);
+  revalidatePath("/installments");
+  revalidatePath("/dashboard");
+  revalidatePath("/reports");
 }
 
 export async function settleLoanAction(

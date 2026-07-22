@@ -59,7 +59,6 @@ export function CustomerForm({
             name="birthday"
             type="date"
             defaultValue={customer?.birthday ?? ""}
-            required={requireDetails}
           />
         </FormField>
 
@@ -132,6 +131,19 @@ export function CustomerForm({
         </div>
 
         <FormField
+          label={t("customerForm.complement")}
+          htmlFor="street_complement"
+          errors={state?.fieldErrors?.street_complement}
+        >
+          <Input
+            id="street_complement"
+            name="street_complement"
+            placeholder={t("customerForm.complementPlaceholder")}
+            defaultValue={customer?.street_complement ?? ""}
+          />
+        </FormField>
+
+        <FormField
           label={t("customerForm.neighborhood")}
           htmlFor="neighborhood"
           errors={state?.fieldErrors?.neighborhood}
@@ -156,7 +168,6 @@ export function CustomerForm({
               inputMode="numeric"
               placeholder="00000-000"
               defaultValue={customer?.cep ?? ""}
-              required={requireDetails}
             />
           </FormField>
           <FormField
