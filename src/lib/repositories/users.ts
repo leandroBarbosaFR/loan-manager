@@ -36,6 +36,37 @@ export async function generateInviteLink(
   return `${origin}/auth/confirm?token_hash=${tokenHash}&type=recovery&next=%2Freset-password`;
 }
 
+export interface UserDataCount {
+  customers: number;
+  loans: number;
+}
+
+/**
+ * How many customers and loans each user has created, keyed by owner_id.
+ * Super-admin only (service role) — used to gauge per-user data footprint.
+ */
+export async function getUserDataCounts(): Promise<
+  Record<string, UserDataCount>
+> {
+  const admin = createAdminClient();
+  const [{ data: customers, error: cErr }, { data: loans, error: lErr }] =
+    await Promise.all([
+      admin.from("customers").select("owner_id"),
+      admin.from("loans").select("owner_id"),
+    ]);
+  if (cErr) throw cErr;
+  if (lErr) throw lErr;
+
+  const counts: Record<string, UserDataCount> = {};
+  const bump = (id: string | null, key: keyof UserDataCount) => {
+    if (!id) return;
+    (counts[id] ??= { customers: 0, loans: 0 })[key] += 1;
+  };
+  for (const r of customers ?? []) bump(r.owner_id, "customers");
+  for (const r of loans ?? []) bump(r.owner_id, "loans");
+  return counts;
+}
+
 /** Lists all user profiles (super-admin only — uses the service role). */
 export async function listProfiles(): Promise<Profile[]> {
   const admin = createAdminClient();

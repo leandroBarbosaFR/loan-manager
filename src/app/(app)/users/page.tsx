@@ -10,7 +10,7 @@ import {
   TableCell,
 } from "@/components/ui/table";
 import { requireSuperAdmin } from "@/lib/auth";
-import { listProfiles } from "@/lib/repositories/users";
+import { listProfiles, getUserDataCounts } from "@/lib/repositories/users";
 import { formatDate } from "@/lib/format";
 import { getT } from "@/lib/i18n/server";
 import { UserForm } from "./user-form";
@@ -21,7 +21,10 @@ export const dynamic = "force-dynamic";
 
 export default async function UsersPage() {
   const [admin, t] = await Promise.all([requireSuperAdmin(), getT()]);
-  const profiles = await listProfiles();
+  const [profiles, counts] = await Promise.all([
+    listProfiles(),
+    getUserDataCounts(),
+  ]);
 
   return (
     <div>
@@ -42,6 +45,7 @@ export default async function UsersPage() {
             <TableRow>
               <TableHead>{t("users.colEmail")}</TableHead>
               <TableHead>{t("users.colRole")}</TableHead>
+              <TableHead className="text-right">{t("users.colData")}</TableHead>
               <TableHead className="hidden sm:table-cell">
                 {t("users.colCreated")}
               </TableHead>
@@ -65,6 +69,14 @@ export default async function UsersPage() {
                     {p.role === "super_admin"
                       ? t("users.roleSuperAdmin")
                       : t("users.roleUser")}
+                  </TableCell>
+                  <TableCell className="text-right tabular-nums">
+                    <span title={t("users.colData")}>
+                      {t("users.dataSummary", {
+                        customers: counts[p.id]?.customers ?? 0,
+                        loans: counts[p.id]?.loans ?? 0,
+                      })}
+                    </span>
                   </TableCell>
                   <TableCell className="hidden text-muted-foreground sm:table-cell">
                     {formatDate(p.created_at)}

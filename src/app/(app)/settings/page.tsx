@@ -3,7 +3,7 @@ import { LanguageSwitcher } from "@/components/language-switcher";
 import { SetPasswordForm } from "@/components/set-password-form";
 import { buttonVariants } from "@/components/ui/button";
 import { ProfileForm } from "./profile-form";
-import { changePasswordAction } from "@/app/change-password/actions";
+import { changeOwnPasswordAction } from "./actions";
 import { getProfile } from "@/lib/auth";
 import { getT } from "@/lib/i18n/server";
 
@@ -47,8 +47,9 @@ export default async function SettingsPage() {
       <Section title={t("settings.security")} description={t("settings.securityDesc")}>
         <div className="max-w-sm">
           <SetPasswordForm
-            action={changePasswordAction}
+            action={changeOwnPasswordAction}
             submitLabel={t("changePassword.submit")}
+            requireCurrent
           />
         </div>
       </Section>

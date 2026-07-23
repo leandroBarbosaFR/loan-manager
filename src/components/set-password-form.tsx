@@ -14,14 +14,18 @@ const ERROR_KEYS: Record<string, MessageKey> = {
   weak_password: "password.errWeak",
   password_mismatch: "password.errMismatch",
   update_failed: "password.errFailed",
+  wrong_current: "password.errWrongCurrent",
 };
 
 export function SetPasswordForm({
   action,
   submitLabel,
+  requireCurrent = false,
 }: {
   action: Action;
   submitLabel: string;
+  /** When true, asks for the current password and verifies it before changing. */
+  requireCurrent?: boolean;
 }) {
   const t = useT();
   const [state, formAction] = useActionState(action, null);
@@ -31,6 +35,16 @@ export function SetPasswordForm({
   return (
     <form action={formAction}>
       <FormError message={errorMsg} />
+      {requireCurrent ? (
+        <FormField label={t("password.current")} htmlFor="current_password">
+          <PasswordInput
+            id="current_password"
+            name="current_password"
+            autoComplete="current-password"
+            required
+          />
+        </FormField>
+      ) : null}
       <FormField label={t("password.new")} htmlFor="password">
         <PasswordInput
           id="password"
