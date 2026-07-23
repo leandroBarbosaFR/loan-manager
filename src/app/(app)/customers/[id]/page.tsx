@@ -151,6 +151,8 @@ export default async function CustomerDetailPage({
                   >
                     {referredBy.name}
                   </Link>
+                ) : customer.referred_by_name ? (
+                  customer.referred_by_name
                 ) : (
                   t("common.dash")
                 )}

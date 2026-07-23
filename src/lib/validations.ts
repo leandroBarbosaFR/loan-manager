@@ -143,6 +143,7 @@ export const customerSchema = z.object({
   city: optionalShort(120),
   state: optionalShort(60),
   referred_by_id: optionalUuid,
+  referred_by_name: optionalShort(200),
   notes: optionalText,
 });
 

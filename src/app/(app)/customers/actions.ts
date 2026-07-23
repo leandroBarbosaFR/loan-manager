@@ -26,6 +26,7 @@ function parse(formData: FormData) {
     city: formData.get("city"),
     state: formData.get("state"),
     referred_by_id: formData.get("referred_by_id"),
+    referred_by_name: formData.get("referred_by_name"),
     notes: formData.get("notes"),
   });
 }

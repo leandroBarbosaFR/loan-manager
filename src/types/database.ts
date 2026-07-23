@@ -65,6 +65,8 @@ export type Customer = {
   state: string | null;
   /** The customer who referred this one ("indicação"). */
   referred_by_id: string | null;
+  /** Free-text referrer when the referrer isn't a customer. */
+  referred_by_name: string | null;
   created_at: string;
 };
 

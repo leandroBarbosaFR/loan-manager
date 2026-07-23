@@ -1,6 +1,6 @@
 "use client";
 
-import { useActionState } from "react";
+import { useActionState, useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { FormField, FormError } from "@/components/form-field";
@@ -33,6 +33,9 @@ export function CustomerForm({
 }) {
   const t = useT();
   const [state, formAction] = useActionState(action, null);
+  const [referralType, setReferralType] = useState<"customer" | "other">(
+    customer?.referred_by_name ? "other" : "customer",
+  );
 
   return (
     <form action={formAction} className="max-w-3xl">
@@ -198,22 +201,54 @@ export function CustomerForm({
         </div>
       </fieldset>
 
-      <FormField
-        label={t("customerForm.referredBy")}
-        htmlFor="referred_by_id"
-        hint={t("customerForm.referredByHint")}
-        errors={state?.fieldErrors?.referred_by_id}
-        className="mb-4"
-        data-tour="cf-referral"
-      >
-        <CustomerSearchSelect
-          name="referred_by_id"
-          options={referralOptions}
-          defaultId={customer?.referred_by_id ?? null}
-          placeholder={t("customerForm.referredByPlaceholder")}
-          clearLabel={t("common.clear")}
-        />
-      </FormField>
+      <div className="mb-4" data-tour="cf-referral">
+        <span className="mb-1 block text-sm font-medium text-foreground">
+          {t("customerForm.referredBy")}
+        </span>
+        <div className="mb-2 flex flex-wrap gap-4 text-sm">
+          <label className="inline-flex items-center gap-2">
+            <input
+              type="radio"
+              name="referral_type"
+              value="customer"
+              checked={referralType === "customer"}
+              onChange={() => setReferralType("customer")}
+              className="accent-primary"
+            />
+            {t("customerForm.referralCustomer")}
+          </label>
+          <label className="inline-flex items-center gap-2">
+            <input
+              type="radio"
+              name="referral_type"
+              value="other"
+              checked={referralType === "other"}
+              onChange={() => setReferralType("other")}
+              className="accent-primary"
+            />
+            {t("customerForm.referralOther")}
+          </label>
+        </div>
+
+        {referralType === "customer" ? (
+          <CustomerSearchSelect
+            name="referred_by_id"
+            options={referralOptions}
+            defaultId={customer?.referred_by_id ?? null}
+            placeholder={t("customerForm.referredByPlaceholder")}
+            clearLabel={t("common.clear")}
+          />
+        ) : (
+          <Input
+            name="referred_by_name"
+            defaultValue={customer?.referred_by_name ?? ""}
+            placeholder={t("customerForm.referralOtherPlaceholder")}
+          />
+        )}
+        <p className="mt-1 text-xs text-muted-foreground">
+          {t("customerForm.referredByHint")}
+        </p>
+      </div>
 
       <FormField
         label={t("customerForm.documents")}
